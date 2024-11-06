@@ -16,7 +16,9 @@ end
 
 target 'ElearningMobile' do
   config = use_native_modules!
-
+  # use_frameworks! :linkage => :static
+  # $RNFirebaseAsStaticFramework = true
+  
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
@@ -36,5 +38,12 @@ target 'ElearningMobile' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # # Swift ve Objective-C uyumluluğunu sağlamak için LIBRARY_SEARCH_PATHS ayarları
+    # installer.aggregate_targets.first.user_project.native_targets.each do |target|
+    #   target.build_configurations.each do |config|
+    #     config.build_settings['LIBRARY_SEARCH_PATHS'] = ['$(inherited)', '$(SDKROOT)/usr/lib/swift']
+    #   end
+    # end
   end
 end

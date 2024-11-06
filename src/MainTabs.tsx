@@ -23,6 +23,9 @@ import ProfileScreen from './features/profile/ProfileScreen';
 import { selectTheme, setDarkMode, setLightMode } from './features/themeSlice';
 import { useAppDispatch, useAppSelector } from './lib/hooks';
 import { BottomTabParamList } from './navigations';
+// import auth from '@react-native-firebase/auth';
+import { LogOut } from 'lucide-react-native';
+import { Alert } from 'react-native';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -74,6 +77,25 @@ const MainTabs = () => {
                     dispatch(setDarkMode());
                   }
                 }}
+              />
+              <Item
+                title="Logout"
+                iconName="log-out"
+                IconComponent={LogOut as any} // 'lucide-react-native' paketindeki LogOut simgesini kullanıyoruz
+                color={props.tintColor}
+                // onPress={() => {
+                //   auth()
+                //     .signOut()
+                //     .then(() => {
+                //       Alert.alert('Başarıyla çıkış yaptınız!');
+                //     })
+                //     .catch(error => {
+                //       Alert.alert(
+                //         'Çıkış sırasında hata oluştu!',
+                //         error.message,
+                //       );
+                //     });
+                // }}
               />
             </HeaderButtons>
           ),

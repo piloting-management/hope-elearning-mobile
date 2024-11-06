@@ -8,13 +8,13 @@ import { Loading } from '@/components/ui/Loading';
 import { Spacer } from '@/components/ui/Spacer';
 import { Text } from '@/components/ui/Text';
 import { useAppSelector } from '@/lib/hooks';
-import { getCourseBySlug } from '@/lib/services/CourseApi';
+import { getCourseBySlug, getEnrolledCourses } from '@/lib/services/CourseApi';
 import { uppercaseFirstChar } from '@/lib/utils';
 import { RootStackParamList } from '@/navigations';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@tanstack/react-query';
 import { ChartNoAxesColumnIncreasingIcon, StarIcon } from 'lucide-react-native';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   InteractionManager,
   RefreshControl,
@@ -24,7 +24,10 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+// import auth from '@react-native-firebase/auth';
 import { selectTheme } from '../themeSlice';
+import Video from 'react-native-video';
+import EnrollCourseButton from '@/components/EnrollCourseButton';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CourseDetail'>;
 
@@ -32,13 +35,13 @@ const avatarSize = 48;
 
 const CourseDetailScreen = ({ navigation, route }: Props) => {
   const { colors } = useAppSelector(selectTheme);
-
   const insets = useSafeAreaInsets();
-
   const headerHidden = useRef(false);
 
   const { slug } = route.params;
+  const [isEnrolled, setIsEnrolled] = useState(false);
 
+  // Fetching course details
   const { data, error, isPending, isFetching, isLoadingError, refetch } =
     useQuery({
       queryKey: ['/content/courses', slug],
@@ -46,15 +49,31 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
       enabled: false,
     });
 
-  useEffect(() => {
-    const interactionPromise = InteractionManager.runAfterInteractions(() => {
-      isPending && refetch();
-    });
+  // Check if the user is enrolled in the course
+  // useEffect(() => {
+  //   const checkEnrollment = async () => {
+  //     const user = auth().currentUser;
+  //     if (user) {
+  //       const token = await user.getIdToken();
+  //       const enrolledCourses = await getEnrolledCourses(token);
 
-    return () => {
-      interactionPromise.cancel();
-    };
-  }, [refetch, isPending]);
+  //       const isUserEnrolled = enrolledCourses.contents.some(
+  //         (course: { course: { slug: string } }) => course.course.slug === slug,
+  //       );
+  //       setIsEnrolled(isUserEnrolled);
+  //     }
+  //   };
+
+  //   checkEnrollment();
+
+  //   const interactionPromise = InteractionManager.runAfterInteractions(() => {
+  //     isPending && refetch();
+  //   });
+
+  //   return () => {
+  //     interactionPromise.cancel();
+  //   };
+  // }, [refetch, isPending, slug]);
 
   const content = () => {
     if (isPending) {
@@ -174,6 +193,15 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
           </View>
         </ScrollView>
         <Divider orientation="horizontal" stroke={0.25} />
+        <View style={styles.videoContainer}>
+          <Video
+            source={{ uri: 'http://localhost:5050/video' }} // Video kaynağı
+            style={styles.videoPlayer}
+            controls={true} // Oynatma kontrolleri (play/pause, ileri/geri)
+            resizeMode="cover" // Video boyutlandırma modu
+          />
+        </View>
+        <Divider orientation="horizontal" stroke={0.25} />
         <View
           style={{
             ...styles.footerContainer,
@@ -184,7 +212,7 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
             <TextButton variant="default" title="Reviews" onPress={() => {}} />
           </View>
           <View style={{ flex: 1 }}>
-            <TextButton title="Enroll" onPress={() => {}} />
+            {!isEnrolled && <EnrollCourseButton course={data} />}
           </View>
         </View>
       </>
@@ -252,6 +280,15 @@ const styles = StyleSheet.create({
     alignContent: 'stretch',
     padding: 16,
     gap: 10,
+  },
+  videoContainer: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#000',
+  },
+  videoPlayer: {
+    width: '100%',
+    height: '100%',
   },
 });
 

@@ -155,3 +155,10 @@ export interface QuizAnswer {
   deleted?: boolean;
   audit?: Audit;
 }
+
+export interface EnrolledCourse {
+  course: Course;
+  progress: number; // Kurs ilerlemesi
+  resumeLesson?: Lesson; // Devam edilen ders (opsiyonel)
+  audit?: Audit; // Kayıtla ilgili zaman damgaları (opsiyonel)
+}
