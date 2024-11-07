@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -7,29 +7,27 @@ import {
   Text,
 } from 'react-native';
 import { Divider } from '@/components/ui/Divider';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import LoginScreen from '../login/LoginScreen';
 
 const ProfileScreen = () => {
-  // const [user, setUser] = useState(auth().currentUser); // Başlangıçta mevcut kullanıcıyı al
+  const [user, setUser] = useState(auth().currentUser); // Başlangıçta mevcut kullanıcıyı al
 
-  useEffect(() => {
-    // Kullanıcı oturum durumunu izlemek için bir subscriber
-    // const subscriber = auth().onAuthStateChanged(user => {
-    //   setUser(user); // Kullanıcı durumunu güncelle
-    // });
-    // Component unmount edildiğinde subscriber'ı temizle
-    // return subscriber;
-  }, []);
+  // useEffect(() => {
+  //   const subscriber = auth().onAuthStateChanged(user => {
+  //     setUser(user); // Kullanıcı durumunu güncelle
+  //   });
+  //   return subscriber;
+  // }, []);
 
-  const handleSignOut = async () => {
-    try {
-      // await auth().signOut(); // Firebase üzerinden oturumu kapat
-      // setUser(null); // Oturum kapandıktan sonra kullanıcıyı null yap
-    } catch (error) {
-      console.log('Sign out error:', error);
-    }
-  };
+  // const handleSignOut = async () => {
+  //   try {
+  //     await auth().signOut(); // Firebase üzerinden oturumu kapat
+  //     setUser(null); // Oturum kapandıktan sonra kullanıcıyı null yap
+  //   } catch (error) {
+  //     console.log('Sign out error:', error);
+  //   }
+  // };
 
   return (
     <>
@@ -46,7 +44,8 @@ const ProfileScreen = () => {
             <Text style={styles.userEmail}>{user.email}</Text>
           </View>
         ) : (
-          <LoginScreen /> // Oturum açılmamışsa LoginScreen'i göster
+          <></>
+          // <LoginScreen /> // Oturum açılmamışsa LoginScreen'i göster
         )}
       </ScrollView>
       {user && (

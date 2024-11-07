@@ -65,19 +65,19 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>fb465501935912162</string> <!-- Buraya Facebook App ID'ni ekle -->
+          <string>fb465501935912162</string> 
         </array>
       </dict>
     </array>
 
     <key>FacebookAppID</key>
-    <string>465501935912162</string> <!-- Facebook App ID -->
+    <string>465501935912162</string> 
 
     <key>FacebookClientToken</key>
     <string>78e6c6aa9e11ba8d95cebe963b1476bb</string>
 	
     <key>FacebookDisplayName</key>
-    <string>hope-elearning</string> <!-- Uygulamanın adı -->
+    <string>hope-elearning</string>
 
     <key>LSApplicationQueriesSchemes</key>
     <array>
