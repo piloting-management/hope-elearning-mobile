@@ -3,7 +3,7 @@ import { ActivityIndicator, View, StyleSheet, Text, Alert } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { ToastAndroid } from 'react-native';
 import { Course } from '@/lib/models';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import { enrollCourse } from '@/lib/services/CourseApi'; // Import the new method
 import { useNavigation } from '@react-navigation/native'; // Navigation kullanımı için
 
@@ -18,42 +18,42 @@ const EnrollCourseButton: React.FC<EnrollCourseButtonProps> = ({
 }) => {
   const [isLoading, setLoading] = useState(false);
   const [userToken, setUserToken] = useState<string | null>(null);
-  // const [currentUser, setCurrentUser] = useState(auth().currentUser);
+  const [currentUser, setCurrentUser] = useState(auth().currentUser);
   const [sessionCookie, setSessionCookie] = useState<string | null>(null);
   const navigation = useNavigation(); // Navigation'ı burada doğru şekilde tanımladık
 
   useEffect(() => {
     const fetchTokenAndSession = async () => {
-      // const user = auth().currentUser;
-      // setCurrentUser(user);
-      // if (user) {
-      //   const token = await user.getIdToken();
-      //   setUserToken(token);
-      //   const fetchedSessionCookie = 'YOUR_SESSION_COOKIE';
-      //   setSessionCookie(fetchedSessionCookie);
-      // }
+      const user = auth().currentUser;
+      setCurrentUser(user);
+      if (user) {
+        const token = await user.getIdToken();
+        setUserToken(token);
+        const fetchedSessionCookie = 'YOUR_SESSION_COOKIE';
+        setSessionCookie(fetchedSessionCookie);
+      }
     };
 
     fetchTokenAndSession();
 
-    // const subscriber = auth().onAuthStateChanged(user => {
-    //   setCurrentUser(user);
-    //   if (user) {
-    //     user.getIdToken().then(setUserToken);
-    //   }
-    // });
+    const subscriber = auth().onAuthStateChanged(user => {
+      setCurrentUser(user);
+      if (user) {
+        user.getIdToken().then(setUserToken);
+      }
+    });
 
-    // return subscriber;
+    return subscriber;
   }, []);
 
   const handleEnrollment = async () => {
-    // if (!currentUser) {
-    //   Alert.alert(
-    //     'Yetkisiz erişim',
-    //     'Bu işlemi gerçekleştirmek için giriş yapmalısınız.',
-    //   );
-    //   return;
-    // }
+    if (!currentUser) {
+      Alert.alert(
+        'Yetkisiz erişim',
+        'Bu işlemi gerçekleştirmek için giriş yapmalısınız.',
+      );
+      return;
+    }
 
     try {
       setLoading(true);

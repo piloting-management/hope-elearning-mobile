@@ -24,7 +24,7 @@ import {
   View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import { selectTheme } from '../themeSlice';
 import Video from 'react-native-video';
 import EnrollCourseButton from '@/components/EnrollCourseButton';
@@ -49,31 +49,30 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
       enabled: false,
     });
 
-  // Check if the user is enrolled in the course
-  // useEffect(() => {
-  //   const checkEnrollment = async () => {
-  //     const user = auth().currentUser;
-  //     if (user) {
-  //       const token = await user.getIdToken();
-  //       const enrolledCourses = await getEnrolledCourses(token);
+  useEffect(() => {
+    const checkEnrollment = async () => {
+      const user = auth().currentUser;
+      if (user) {
+        const token = await user.getIdToken();
+        const enrolledCourses = await getEnrolledCourses(token);
 
-  //       const isUserEnrolled = enrolledCourses.contents.some(
-  //         (course: { course: { slug: string } }) => course.course.slug === slug,
-  //       );
-  //       setIsEnrolled(isUserEnrolled);
-  //     }
-  //   };
+        const isUserEnrolled = enrolledCourses.contents.some(
+          (course: { course: { slug: string } }) => course.course.slug === slug,
+        );
+        setIsEnrolled(isUserEnrolled);
+      }
+    };
 
-  //   checkEnrollment();
+    checkEnrollment();
 
-  //   const interactionPromise = InteractionManager.runAfterInteractions(() => {
-  //     isPending && refetch();
-  //   });
+    const interactionPromise = InteractionManager.runAfterInteractions(() => {
+      isPending && refetch();
+    });
 
-  //   return () => {
-  //     interactionPromise.cancel();
-  //   };
-  // }, [refetch, isPending, slug]);
+    return () => {
+      interactionPromise.cancel();
+    };
+  }, [refetch, isPending, slug]);
 
   const content = () => {
     if (isPending) {

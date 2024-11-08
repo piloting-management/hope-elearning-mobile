@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -11,28 +11,28 @@ import auth from '@react-native-firebase/auth';
 import LoginScreen from '../login/LoginScreen';
 
 const ProfileScreen = () => {
-  const [user, setUser] = useState(auth().currentUser); // Başlangıçta mevcut kullanıcıyı al
+  const [user, setUser] = useState(auth().currentUser);
 
-  // useEffect(() => {
-  //   const subscriber = auth().onAuthStateChanged(user => {
-  //     setUser(user); // Kullanıcı durumunu güncelle
-  //   });
-  //   return subscriber;
-  // }, []);
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(authUser => {
+      setUser(authUser);
+    });
+    return subscriber;
+  }, []);
 
-  // const handleSignOut = async () => {
-  //   try {
-  //     await auth().signOut(); // Firebase üzerinden oturumu kapat
-  //     setUser(null); // Oturum kapandıktan sonra kullanıcıyı null yap
-  //   } catch (error) {
-  //     console.log('Sign out error:', error);
-  //   }
-  // };
+  const handleSignOut = async () => {
+    try {
+      await auth().signOut();
+      setUser(null);
+    } catch (error) {
+      console.log('Sign out error:', error);
+    }
+  };
 
   return (
     <>
       <Divider orientation="horizontal" stroke={0.5} />
-      {/* <ScrollView
+      <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}
         contentInsetAdjustmentBehavior="automatic">
@@ -44,8 +44,7 @@ const ProfileScreen = () => {
             <Text style={styles.userEmail}>{user.email}</Text>
           </View>
         ) : (
-          <></>
-          // <LoginScreen /> // Oturum açılmamışsa LoginScreen'i göster
+          <LoginScreen /> // Oturum açılmamışsa LoginScreen'i göster
         )}
       </ScrollView>
       {user && (
@@ -54,7 +53,7 @@ const ProfileScreen = () => {
             <Text style={styles.logoutButtonText}>Çıkış Yap</Text>
           </TouchableOpacity>
         </View>
-      )} */}
+      )}
     </>
   );
 };

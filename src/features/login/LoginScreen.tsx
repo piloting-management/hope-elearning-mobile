@@ -8,10 +8,10 @@ import {
   Alert,
   StyleSheet,
 } from 'react-native';
-// import auth from '@react-native-firebase/auth';
+import auth from '@react-native-firebase/auth';
 import { useDispatch } from 'react-redux';
 import { setUser } from '@/features/userSlice';
-// import FacebookLogin from './FacebookLogin';
+import FacebookLogin from './FacebookLogin';
 import { useAppSelector } from '@/lib/hooks';
 import { selectTheme } from '../themeSlice';
 
@@ -46,23 +46,22 @@ const LoginScreen = () => {
     setError(null);
 
     try {
-      // const userCredential = await auth().signInWithEmailAndPassword(
-      //   email,
-      //   password,
-      // );
-      // const user = userCredential.user;
+      const userCredential = await auth().signInWithEmailAndPassword(
+        email,
+        password,
+      );
+      const user = userCredential.user;
 
-      // // Tüm kullanıcı bilgilerini store'a kaydedelim
-      // dispatch(
-      //   setUser({
-      //     displayName: user.displayName || '',
-      //     email: user.email || '',
-      //     emailVerified: user.emailVerified,
-      //     token: await user.getIdToken(),
-      //     uid: user.uid,
-      //     photoURL: user.photoURL,
-      //   }),
-      // );
+      dispatch(
+        setUser({
+          displayName: user.displayName || '',
+          email: user.email || '',
+          emailVerified: user.emailVerified,
+          token: await user.getIdToken(),
+          uid: user.uid,
+          photoURL: user.photoURL,
+        }),
+      );
 
       Alert.alert('Giriş başarılı!');
     } catch (e: any) {
@@ -125,7 +124,7 @@ const LoginScreen = () => {
         <Text style={[styles.orText, { color: colors.text }]}>OR</Text>
         <View style={styles.line} />
       </View>
-      {/* <FacebookLogin /> */}
+      <FacebookLogin />
       <TouchableOpacity>
         <Text style={[styles.signUpText, { color: colors.primary }]}>
           Don't have an account? Sign Up
