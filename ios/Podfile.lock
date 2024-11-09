@@ -1674,6 +1674,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNScreenshotPrevent (1.2.1):
+    - React
   - RNSVG (15.8.0):
     - React-Core
   - RNVectorIcons (10.2.0):
@@ -1772,6 +1774,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNScreenshotPrevent (from `../node_modules/react-native-screenshot-prevent`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -1932,6 +1935,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/auth"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNScreenshotPrevent:
+    :path: "../node_modules/react-native-screenshot-prevent"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   RNVectorIcons:
@@ -2021,6 +2026,7 @@ SPEC CHECKSUMS:
   RNFBApp: 2d39ec9a9dd25f18e96009053af087b9ed714626
   RNFBAuth: 44bc835c2a5a62fecf71c498e75a7b2c065eed35
   RNScreens: 16b782596e80e475b7f3ec769c9a97d789d9b0ed
+  RNScreenshotPrevent: 105cddf74799cbd81aac76e56a4025a345db8967
   RNSVG: 8b1a777d54096b8c2a0fd38fc9d5a454332bbb4d
   RNVectorIcons: 7b81882e9c9369031aede0016dee0fe415cf2f43
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d

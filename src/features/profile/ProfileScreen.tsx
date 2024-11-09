@@ -9,9 +9,12 @@ import {
 import { Divider } from '@/components/ui/Divider';
 import auth from '@react-native-firebase/auth';
 import LoginScreen from '../login/LoginScreen';
+import { useAppSelector } from '@/lib/hooks';
+import { selectTheme } from '../../features/themeSlice';
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
+  const { colors } = useAppSelector(selectTheme);
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(authUser => {
@@ -29,6 +32,9 @@ const ProfileScreen = () => {
     }
   };
 
+  // Stil oluşturma fonksiyonu
+  const styles = getStyles(colors);
+
   return (
     <>
       <Divider orientation="horizontal" stroke={0.5} />
@@ -44,7 +50,7 @@ const ProfileScreen = () => {
             <Text style={styles.userEmail}>{user.email}</Text>
           </View>
         ) : (
-          <LoginScreen /> // Oturum açılmamışsa LoginScreen'i göster
+          <LoginScreen />
         )}
       </ScrollView>
       {user && (
@@ -58,40 +64,42 @@ const ProfileScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexGrow: 1,
-    justifyContent: 'space-between',
-  },
-  profileContainer: {
-    padding: 20,
-    alignItems: 'center',
-  },
-  userName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  userEmail: {
-    fontSize: 18,
-    marginTop: 10,
-    color: 'gray',
-  },
-  footer: {
-    paddingBottom: 20,
-    paddingHorizontal: 20,
-    backgroundColor: '#f5f5f5',
-  },
-  logoutButton: {
-    backgroundColor: '#FF3B30',
-    padding: 15,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  logoutButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-});
+// Dinamik stil fonksiyonu
+const getStyles = (colors: { background: any; primary: any; text: any }) =>
+  StyleSheet.create({
+    container: {
+      flexGrow: 1,
+      justifyContent: 'space-between',
+    },
+    profileContainer: {
+      padding: 20,
+      alignItems: 'center',
+    },
+    userName: {
+      fontSize: 24,
+      fontWeight: 'bold',
+    },
+    userEmail: {
+      fontSize: 18,
+      marginTop: 10,
+      color: 'gray',
+    },
+    footer: {
+      paddingBottom: 20,
+      paddingHorizontal: 20,
+      backgroundColor: colors.background, // colors'ı burada kullanıyoruz
+    },
+    logoutButton: {
+      backgroundColor: colors.primary || '#FF3B30',
+      padding: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    logoutButtonText: {
+      color: colors.text || '#fff',
+      fontSize: 16,
+      fontWeight: '600',
+    },
+  });
 
 export default ProfileScreen;
