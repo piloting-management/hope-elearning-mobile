@@ -1,5 +1,5 @@
 import { makeApiRequest } from '../makeApiRequest';
-import { Course, Page, SearchParams } from '../models';
+import { Course, Lesson, Page, SearchParams } from '../models';
 import { buildQueryParams } from '../utils';
 import { validateApiResponse } from '../validateApiResponse';
 import { getSession } from './SessionApi';
@@ -17,6 +17,21 @@ export async function getCourseBySlug(slug: string, signal?: AbortSignal) {
   await validateApiResponse(resp);
 
   return (await resp.json()) as Course;
+}
+
+export async function getLessonBySlug(slug: string, signal?: AbortSignal) {
+  const url = `/enrollments/${slug}/lesson`;
+
+  const resp = await makeApiRequest({
+    url,
+    options: {
+      signal,
+    },
+  });
+
+  await validateApiResponse(resp);
+
+  return (await resp.json()) as Lesson; // Assuming `Lesson` is a defined type
 }
 
 export async function getCourses(params: SearchParams, signal?: AbortSignal) {

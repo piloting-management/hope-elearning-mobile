@@ -28,6 +28,7 @@ import auth from '@react-native-firebase/auth';
 import { selectTheme } from '../themeSlice';
 import Video from 'react-native-video';
 import EnrollCourseButton from '@/components/EnrollCourseButton';
+import { Lesson } from '../../lib/models';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CourseDetail'>;
 
@@ -40,6 +41,7 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
 
   const { slug } = route.params;
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [lessons, setLessons] = useState<Lesson[]>([]);
 
   // Fetching course details
   const { data, error, isPending, isFetching, isLoadingError, refetch } =
@@ -48,6 +50,15 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
       queryFn: ({ signal }) => getCourseBySlug(slug, signal),
       enabled: false,
     });
+
+  useEffect(() => {
+    if (data?.chapters) {
+      const allLessons = data.chapters
+        .flatMap(chapter => chapter.lessons)
+        .filter((lesson): lesson is Lesson => lesson !== undefined);
+      setLessons(allLessons);
+    }
+  }, [data]);
 
   useEffect(() => {
     const checkEnrollment = async () => {
@@ -96,6 +107,35 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
       );
     }
 
+    const renderVideoContent = () => {
+      const videoLesson = lessons.find(lesson => lesson.type === 'video');
+
+      if (!videoLesson || !videoLesson.lexical) return null;
+
+      let videoSource;
+      try {
+        const parsedLexical = JSON.parse(videoLesson.lexical);
+        videoSource = parsedLexical?.source;
+      } catch (error) {
+        console.error('Failed to parse lexical:', error);
+        return null;
+      }
+
+      if (!videoSource || typeof videoSource !== 'string') return null;
+
+      return (
+        <View style={styles.videoContainer}>
+          <Text style={styles.heading}>{videoLesson.title}</Text>
+          <Video
+            source={{ uri: videoSource }}
+            style={styles.videoPlayer}
+            controls={true}
+            resizeMode="cover"
+          />
+        </View>
+      );
+    };
+
     return (
       <>
         <ScrollView
@@ -128,6 +168,7 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
             }
           }}>
           <View style={styles.container}>
+            {renderVideoContent()}
             <View style={styles.coverContainer}>
               <CustomImage
                 source={
@@ -191,15 +232,6 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
             <Spacer orientation="vertical" spacing={10} />
           </View>
         </ScrollView>
-        <Divider orientation="horizontal" stroke={0.25} />
-        <View style={styles.videoContainer}>
-          <Video
-            source={{ uri: 'http://localhost:5050/video' }} // Video kaynağı
-            style={styles.videoPlayer}
-            controls={true} // Oynatma kontrolleri (play/pause, ileri/geri)
-            resizeMode="cover" // Video boyutlandırma modu
-          />
-        </View>
         <Divider orientation="horizontal" stroke={0.25} />
         <View
           style={{
@@ -283,7 +315,7 @@ const styles = StyleSheet.create({
   videoContainer: {
     width: '100%',
     height: 200,
-    backgroundColor: '#000',
+    backgroundColor: 'red',
   },
   videoPlayer: {
     width: '100%',
