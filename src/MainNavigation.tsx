@@ -21,6 +21,7 @@ import CourseListScreen from './features/course/CourseListScreen';
 import { selectTheme } from './features/themeSlice';
 import { useAppSelector } from './lib/hooks';
 import { RootStackParamList } from './navigations';
+import ResumeCourseScreen from './features/course/ResumeCourseScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -119,6 +120,32 @@ const MainNavigation = () => {
           <Stack.Screen
             name="CourseDetail"
             component={CourseDetailScreen}
+            options={({ route }) => ({
+              headerBackTitleVisible: false,
+              title: '',
+              headerRight: props => {
+                return (
+                  <HeaderButtons left>
+                    <Item
+                      title="Bookmark"
+                      iconName="bookmark"
+                      IconComponent={BookmarkIcon as any}
+                      color={props.tintColor}
+                    />
+                    <Item
+                      title="Share"
+                      iconName="share"
+                      IconComponent={Share2Icon as any}
+                      color={props.tintColor}
+                    />
+                  </HeaderButtons>
+                );
+              },
+            })}
+          />
+          <Stack.Screen
+            name="ResumeCourse"
+            component={ResumeCourseScreen}
             options={({ route }) => ({
               headerBackTitleVisible: false,
               title: '',

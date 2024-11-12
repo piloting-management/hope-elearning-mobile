@@ -1,7 +1,10 @@
+import { Lesson } from './lib/models';
+
 export type RootStackParamList = {
   MainTabs: undefined;
   BlogDetail: { slug: string };
   CourseDetail: { slug: string };
+  ResumeCourse: { lesson: (Lesson | undefined)[] };
   CourseList: undefined;
 };
 

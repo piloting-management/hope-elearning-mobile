@@ -26,9 +26,8 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import auth from '@react-native-firebase/auth';
 import { selectTheme } from '../themeSlice';
-import Video from 'react-native-video';
 import EnrollCourseButton from '@/components/EnrollCourseButton';
-import { Lesson } from '../../lib/models';
+import { Chapter, Lesson } from '../../lib/models';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'CourseDetail'>;
 
@@ -42,6 +41,8 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
   const { slug } = route.params;
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [lessons, setLessons] = useState<Lesson[]>([]);
+  const [activeTab, setActiveTab] = useState('Description');
+  const tabs = ['Description', 'Syllabus'];
 
   // Fetching course details
   const { data, error, isPending, isFetching, isLoadingError, refetch } =
@@ -107,33 +108,17 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
       );
     }
 
-    const renderVideoContent = () => {
-      const videoLesson = lessons.find(lesson => lesson.type === 'video');
-
-      if (!videoLesson || !videoLesson.lexical) return null;
-
-      let videoSource;
-      try {
-        const parsedLexical = JSON.parse(videoLesson.lexical);
-        videoSource = parsedLexical?.source;
-      } catch (error) {
-        console.error('Failed to parse lexical:', error);
-        return null;
-      }
-
-      if (!videoSource || typeof videoSource !== 'string') return null;
-
-      return (
-        <View style={styles.videoContainer}>
-          <Text style={styles.heading}>{videoLesson.title}</Text>
-          <Video
-            source={{ uri: videoSource }}
-            style={styles.videoPlayer}
-            controls={true}
-            resizeMode="cover"
-          />
+    const renderLessons = (chapters: Chapter[] | undefined) => {
+      return chapters?.map(chapter => (
+        <View key={chapter.id} style={styles.accordionContainer}>
+          <Text style={styles.accordionTitle}>{chapter.title}</Text>
+          {chapter.lessons?.map((lesson: Lesson) => (
+            <View key={lesson.id} style={styles.lessonItem}>
+              <Text style={styles.lessonTitle}>{lesson.title}</Text>
+            </View>
+          ))}
         </View>
-      );
+      ));
     };
 
     return (
@@ -168,7 +153,6 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
             }
           }}>
           <View style={styles.container}>
-            {renderVideoContent()}
             <View style={styles.coverContainer}>
               <CustomImage
                 source={
@@ -190,7 +174,7 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
 
             <Spacer orientation="vertical" spacing={12} />
 
-            <View style={styles.propsContainer}>
+            {/* <View style={styles.propsContainer}>
               <View style={styles.propsItem}>
                 <StarIcon color="#ffb703" fill="#ffb703" size={16} />
                 <Text style={styles.propsText}>
@@ -212,24 +196,32 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
                   {uppercaseFirstChar(data.access)}
                 </Text>
               </View>
+            </View> */}
+
+            <View style={styles.tabContainer}>
+              {tabs.map(tab => (
+                <Text
+                  key={tab}
+                  style={[styles.tab, activeTab === tab && styles.activeTab]}
+                  onPress={() => setActiveTab(tab)}>
+                  {tab}
+                </Text>
+              ))}
             </View>
 
+            {activeTab === 'Description' && (
+              <View style={styles.descriptionContainer}>
+                <Text>{data.excerpt}</Text>
+              </View>
+            )}
+
+            {activeTab === 'Syllabus' && (
+              <ScrollView contentContainerStyle={styles.syllabusContainer}>
+                {renderLessons(data.chapters)}
+              </ScrollView>
+            )}
+
             <Spacer orientation="vertical" spacing={28} />
-
-            <Text style={styles.heading}>Description</Text>
-            <Spacer orientation="vertical" spacing={10} />
-
-            <CustomWebView html={data.description} basic />
-
-            <Spacer orientation="vertical" spacing={24} />
-
-            <Text style={styles.heading}>Syllabus</Text>
-            <Spacer orientation="vertical" spacing={10} />
-
-            <Spacer orientation="vertical" spacing={24} />
-
-            <Text style={styles.heading}>Authors</Text>
-            <Spacer orientation="vertical" spacing={10} />
           </View>
         </ScrollView>
         <Divider orientation="horizontal" stroke={0.25} />
@@ -240,7 +232,15 @@ const CourseDetailScreen = ({ navigation, route }: Props) => {
             backgroundColor: colors.card,
           }}>
           <View style={{ flex: 1 }}>
-            <TextButton variant="default" title="Reviews" onPress={() => {}} />
+            <TextButton
+              variant="default"
+              title="Resume Course"
+              onPress={() => {
+                const lessons =
+                  data.chapters?.flatMap(chapter => chapter.lessons) || [];
+                navigation.navigate('ResumeCourse', { lesson: lessons });
+              }}
+            />
           </View>
           <View style={{ flex: 1 }}>
             {!isEnrolled && <EnrollCourseButton course={data} />}
@@ -277,10 +277,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     ...DefaultStyles.fonts.semiBold,
   },
-  heading: {
-    fontSize: 18,
-    ...DefaultStyles.fonts.semiBold,
-  },
   accessView: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -312,14 +308,56 @@ const styles = StyleSheet.create({
     padding: 16,
     gap: 10,
   },
-  videoContainer: {
-    width: '100%',
-    height: 200,
-    backgroundColor: 'red',
+
+  tabContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start', // Tabları sola yapıştırır
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
-  videoPlayer: {
-    width: '100%',
-    height: '100%',
+  tab: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    color: '#666',
+  },
+  activeTab: {
+    color: '#000',
+    borderBottomWidth: 2,
+    borderBottomColor: '#6200ee', // Aktif sekme alt çizgi rengi
+  },
+  descriptionContainer: {
+    paddingVertical: 16,
+  },
+  syllabusContainer: {
+    paddingVertical: 16,
+  },
+  accordionContainer: {
+    marginVertical: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    padding: 16,
+    backgroundColor: '#f1f1f1', // Chapter'ı daha belirgin yapmak için arka plan
+  },
+  accordionTitle: {
+    fontSize: 20, // Daha büyük ve belirgin font boyutu
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  lessonItem: {
+    marginVertical: 4,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#ddd',
+    marginLeft: 8, // Lesson'ları chapter'dan biraz içeri çekmek için
+  },
+  lessonTitle: {
+    fontSize: 14, // Daha küçük ve soft
+    fontWeight: '400',
+    color: '#555',
   },
 });
 
