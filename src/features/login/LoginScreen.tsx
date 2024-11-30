@@ -62,8 +62,6 @@ const LoginScreen = () => {
           photoURL: user.photoURL,
         }),
       );
-
-      Alert.alert('Giriş başarılı!');
     } catch (e: any) {
       const errorMessage = getErrorMessage(e.code);
       setError(errorMessage);

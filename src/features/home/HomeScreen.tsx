@@ -32,6 +32,7 @@ import {
   View,
 } from 'react-native';
 import { selectTheme } from '../themeSlice';
+import { useTranslate } from '@tolgee/react';
 
 const fetchHomeData = async (signal?: AbortSignal) => {
   const categoriesPromise = getCategories(
@@ -97,6 +98,7 @@ const Heading = ({ title, seeAll }: HeadingProps) => {
 };
 
 const HomeScreen = () => {
+  const { t } = useTranslate();
   const { colors } = useAppSelector(selectTheme);
 
   const rootNavigation =
@@ -174,7 +176,7 @@ const HomeScreen = () => {
               ...styles.searchTitle,
               color: colors.text,
             }}>
-            What do you want to learn?
+            {t('main.wantToLearn', 'DEFAULT VALUE')}
           </Text>
 
           <Spacer orientation="vertical" spacing={10} />

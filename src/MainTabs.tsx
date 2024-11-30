@@ -59,6 +59,8 @@ const MainTabs = () => {
           },
           headerRight: props => (
             <HeaderButtons>
+              {/* {props.tintColor && <LanguageSwitcher />} */}
+
               <Item
                 title="Notification"
                 iconName="notification"

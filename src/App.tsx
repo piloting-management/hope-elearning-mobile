@@ -17,6 +17,23 @@ import { Provider } from 'react-redux';
 import MainNavigation from './MainNavigation';
 import { ApiError } from './lib/errors';
 import { store } from './lib/store';
+import { TOLGEE_API_URL, TOLGEE_API_KEY } from '@env';
+import { Tolgee, DevTools, TolgeeProvider, FormatSimple } from '@tolgee/react';
+import en from './i18n/en.json';
+import tr from './i18n/tr.json';
+
+const tolgee = Tolgee()
+  .use(DevTools())
+  // replace with .use(FormatIcu()) for rendering plurals, foramatted numbers, etc.
+  .init({
+    language: 'en',
+
+    // for development
+    apiUrl: TOLGEE_API_URL,
+    apiKey: TOLGEE_API_KEY,
+
+    staticData: { en, tr },
+  });
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,11 +96,13 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-        <QueryClientProvider client={queryClient}>
-          <MainNavigation />
-        </QueryClientProvider>
-      </SafeAreaProvider>
+      <TolgeeProvider tolgee={tolgee}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+          <QueryClientProvider client={queryClient}>
+            <MainNavigation />
+          </QueryClientProvider>
+        </SafeAreaProvider>
+      </TolgeeProvider>
     </Provider>
   );
 };

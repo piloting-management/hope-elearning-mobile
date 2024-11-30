@@ -1,4 +1,5 @@
 import { API_URL } from '@env';
+import { getUniqueId } from 'react-native-device-info'; // Benzersiz cihaz kimliği için
 
 interface MakeApiRequestProps {
   url: string;
@@ -11,11 +12,15 @@ export async function makeApiRequest({
   options = {},
   token, // Token parametresi opsiyonel olarak geliyor
 }: MakeApiRequestProps): Promise<Response> {
+  // Benzersiz cihaz kimliğini al
+  const deviceId = await getUniqueId();
+
   let requestOptions: RequestInit = {
     ...options,
     headers: {
       ...options.headers,
       ...(token ? { Authorization: `Bearer ${token}` } : {}), // Token varsa header'a ekle
+      'device-id': deviceId, // Device-Id header'ını ekle
     },
   };
 

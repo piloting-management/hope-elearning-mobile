@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { View, Button, Alert, ActivityIndicator } from 'react-native';
 import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 import { AccessToken, LoginManager } from 'react-native-fbsdk-next';
+import { getUniqueId } from 'react-native-device-info'; // Benzersiz cihaz kimliği için
+import { verifyUserWithApi } from '../../lib/services/LoginApi'; // verifyUserWithApi API isteği
 
 const FacebookLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -9,7 +12,6 @@ const FacebookLogin = () => {
   const handleFacebookLogin = async () => {
     try {
       setLoading(true);
-      console.log('LoginManager:', LoginManager);
 
       // Facebook ile giriş yapma
       const result = await LoginManager.logInWithPermissions([
@@ -30,19 +32,86 @@ const FacebookLogin = () => {
       const facebookCredential = auth.FacebookAuthProvider.credential(
         data.accessToken,
       );
-      await auth().signInWithCredential(facebookCredential);
+      const userCredential = await auth().signInWithCredential(
+        facebookCredential,
+      );
+      const user = userCredential.user;
+      const token = await user.getIdToken(); // Firebase token al
+      const deviceId = await getUniqueId();
 
-      Alert.alert('Giriş başarılı!');
-    } catch (error) {
+      // Kullanıcı bilgilerini Firestore'a kaydet
+      // await checkAndStoreUser(user.uid, user.email, deviceId);
+
+      // Doğrulama başarılı, giriş başarılı mesajı göster
+      // Alert.alert('Giriş başarılı!');
+    } catch (error: any) {
+      console.error('Giriş hatası:', error);
       Alert.alert(
         'Giriş başarısız!',
-        `Bu e-posta adresi zaten başka bir kimlik doğrulama yöntemiyle kullanılmış: ${error}.`,
+        `Bir hata oluştu: ${error.message || 'Bilinmeyen hata'}.`,
       );
-      // await auth().currentUser.linkWithCredential(pendingCred);
     } finally {
       setLoading(false);
     }
   };
+
+  // const retryWithBackoff = async (
+  //   operation: any,
+  //   maxRetries = 3,
+  //   delay = 1000,
+  // ) => {
+  //   let retries = 0;
+  //   while (retries < maxRetries) {
+  //     try {
+  //       return await operation(); // İşlemi dene
+  //     } catch (error: any) {
+  //       if (error.code === 'firestore/unavailable' && retries < maxRetries) {
+  //         retries++;
+  //         console.log(`Hata alındı. ${retries}. tekrar denemesi...`);
+  //         await new Promise(resolve => setTimeout(resolve, delay * retries)); // Gecikmeli tekrar
+  //       } else {
+  //         throw error; // Başka bir hata veya maksimum deneme sınırına ulaşıldı
+  //       }
+  //     }
+  //   }
+  // };
+
+  // const checkAndStoreUser = async (
+  //   uid: string,
+  //   email: string | null,
+  //   deviceId: string,
+  // ) => {
+  //   try {
+  //     await retryWithBackoff(async () => {
+  //       const userRef = firestore().collection('users').doc(uid);
+  //       const doc = await userRef.get();
+  //       if (doc.exists) {
+  //         const userData = doc.data();
+  //         if (userData?.devices && userData.devices.includes(deviceId)) {
+  //           console.log('Cihaz zaten kayıtlı, devam ediliyor.');
+  //         } else {
+  //           console.log('Yeni cihaz kaydediliyor.');
+  //           await userRef.update({
+  //             devices: firestore.FieldValue.arrayUnion(deviceId),
+  //             lastLogin: firestore.FieldValue.serverTimestamp(),
+  //           });
+  //         }
+  //       } else {
+  //         console.log('Yeni kullanıcı oluşturuluyor.');
+  //         await userRef.set({
+  //           email: email || '',
+  //           devices: [deviceId],
+  //           lastLogin: firestore.FieldValue.serverTimestamp(),
+  //         });
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error(
+  //       'Kullanıcı veya cihaz bilgileri kaydedilirken hata oluştu:',
+  //       error,
+  //     );
+  //   }
+  // };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
