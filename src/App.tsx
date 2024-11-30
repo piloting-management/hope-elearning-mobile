@@ -21,19 +21,19 @@ import { TOLGEE_API_URL, TOLGEE_API_KEY } from '@env';
 import { Tolgee, DevTools, TolgeeProvider, FormatSimple } from '@tolgee/react';
 import en from './i18n/en.json';
 import tr from './i18n/tr.json';
+import { FormatIcu } from '@tolgee/format-icu';
+import '@formatjs/intl-locale/polyfill';
+import '@formatjs/intl-pluralrules/polyfill';
 
-const tolgee = Tolgee()
-  .use(DevTools())
-  // replace with .use(FormatIcu()) for rendering plurals, foramatted numbers, etc.
-  .init({
-    language: 'en',
+const tolgee = Tolgee().use(DevTools()).use(FormatIcu()).init({
+  language: 'en',
 
-    // for development
-    apiUrl: TOLGEE_API_URL,
-    apiKey: TOLGEE_API_KEY,
+  // for development
+  apiUrl: TOLGEE_API_URL,
+  apiKey: TOLGEE_API_KEY,
 
-    staticData: { en, tr },
-  });
+  staticData: { en, tr },
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {

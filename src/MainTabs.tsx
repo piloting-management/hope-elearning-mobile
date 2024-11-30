@@ -26,6 +26,7 @@ import { BottomTabParamList } from './navigations';
 import auth from '@react-native-firebase/auth';
 import { LogOut } from 'lucide-react-native';
 import { Alert } from 'react-native';
+import LanguageSwitcher from './components/ui/LanguageSwitcher';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -59,8 +60,7 @@ const MainTabs = () => {
           },
           headerRight: props => (
             <HeaderButtons>
-              {/* {props.tintColor && <LanguageSwitcher />} */}
-
+              <LanguageSwitcher />
               <Item
                 title="Notification"
                 iconName="notification"

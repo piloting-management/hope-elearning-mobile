@@ -176,7 +176,7 @@ const HomeScreen = () => {
               ...styles.searchTitle,
               color: colors.text,
             }}>
-            {t('main.wantToLearn', 'DEFAULT VALUE')}
+            {t('wantToLearn', 'DEFAULT VALUE')}
           </Text>
 
           <Spacer orientation="vertical" spacing={10} />
