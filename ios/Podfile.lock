@@ -2656,7 +2656,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video (6.7.0):
+  - react-native-video (6.8.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2669,7 +2669,7 @@ PODS:
     - React-featureflags
     - React-graphics
     - React-ImageManager
-    - react-native-video/Video (= 6.7.0)
+    - react-native-video/Video (= 6.8.2)
     - React-NativeModulesApple
     - React-RCTFabric
     - React-rendererdebug
@@ -2678,7 +2678,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Fabric (6.7.0):
+  - react-native-video/Fabric (6.8.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2699,7 +2699,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-video/Video (6.7.0):
+  - react-native-video/Video (6.8.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2721,7 +2721,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-webview (13.12.3):
+  - react-native-webview (13.12.4):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3010,7 +3010,7 @@ PODS:
     - React-perflogger (= 0.76.3)
     - React-utils (= 0.76.3)
   - RecaptchaInterop (100.0.0)
-  - RNCAsyncStorage (2.0.0):
+  - RNCAsyncStorage (2.1.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3031,20 +3031,20 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - RNDeviceInfo (14.0.0):
+  - RNDeviceInfo (14.0.1):
     - React-Core
-  - RNFBApp (21.4.1):
+  - RNFBApp (21.6.1):
     - Firebase/CoreOnly (= 11.5.0)
     - React-Core
-  - RNFBAuth (21.4.1):
+  - RNFBAuth (21.6.1):
     - Firebase/Auth (= 11.5.0)
     - React-Core
     - RNFBApp
-  - RNFBFirestore (21.4.1):
+  - RNFBFirestore (21.6.1):
     - Firebase/Firestore (= 11.5.0)
     - React-Core
     - RNFBApp
-  - RNScreens (4.0.0):
+  - RNScreens (4.3.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3065,9 +3065,9 @@ PODS:
     - ReactCodegen
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - RNScreens/common (= 4.0.0)
+    - RNScreens/common (= 4.3.0)
     - Yoga
-  - RNScreens/common (4.0.0):
+  - RNScreens/common (4.3.0):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -3477,8 +3477,8 @@ SPEC CHECKSUMS:
   react-native-fbsdk-next: a0dd8905af573ec4d21b7bc398423ccaa2ce2b07
   react-native-netinfo: f0a9899081c185db1de5bb2fdc1c88c202a059ac
   react-native-safe-area-context: f826417dadd1c1042c59355fb050682a9839f990
-  react-native-video: e5e752b62458690667276df947aee93b394d3e20
-  react-native-webview: b20d2755d69776b5e254822e8c8f452694f9d2b2
+  react-native-video: 07ebee84a1b3a3ad9d2e6ba182eb5788eaf5a509
+  react-native-webview: 203228267bef786309360d9ea75f238e60308373
   React-nativeconfig: f2bddc1e6c2eb793c065b37e12c513fdea88afef
   React-NativeModulesApple: 3d43a432a7fdc0938af4fb1b09e1bc6952049f24
   React-perflogger: 6afb7eebf7d9521cc70481688ccddf212970e9d3
@@ -3507,12 +3507,12 @@ SPEC CHECKSUMS:
   ReactCodegen: 11ba5753ff8fd0eade9f701a238b6bfbcfcc241d
   ReactCommon: cef332bed205215d2a0270e12e1feb337974ccfe
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  RNCAsyncStorage: 5601d6c658f0bf0a3714ea53e2b42ad25ac550ea
-  RNDeviceInfo: 6192a9c9167e256803e554038b22b3b2b40163dc
-  RNFBApp: 7c4cbfa8d93b1b88845df5c243e33975ba1bc963
-  RNFBAuth: 0ff5ffe8218b8d6bd22b910edb02defe4e2e5c26
-  RNFBFirestore: 707fd1b1b68d52f8cb08a668ccfc66347253aa8f
-  RNScreens: 6e2ab381864f079fce8a18ddf49ef6f164d7d7bd
+  RNCAsyncStorage: d494bdee892cc6a4d790c960afb7b5dd1d91abb1
+  RNDeviceInfo: 825f0d2f4381327317f12d1522720a8f76e6a19e
+  RNFBApp: a3c9c3b23aa2d77001ce62b5a997325927593c12
+  RNFBAuth: 15a007eecd6ba7b9e52b45e2b41cdf6fe9f13968
+  RNFBFirestore: 6db2eb460dd774c0a28210fcee2c80a4afbd54dc
+  RNScreens: 9ec20e849e0df1376c072235ff123f59cdf71287
   RNSVG: feeb4eb546e718d6c6fb70d10fd31e0c5c2d0d90
   RNVectorIcons: 8c7af262a73890caabbac2bb081ddbaa1b8a768c
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
