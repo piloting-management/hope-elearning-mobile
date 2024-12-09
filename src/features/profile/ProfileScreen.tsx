@@ -16,13 +16,31 @@ import { selectTheme } from '../../features/themeSlice';
 import { verifyUserWithApi } from '@/lib/services/LoginApi';
 import { getUniqueId } from 'react-native-device-info';
 import ApprovalModal from '@/components/ui/Approval';
+import StudentStatusModal from '@/components/ui/StudentStatusModal';
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
   const [isVerified, setIsVerified] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState(''); // Dinamik mesaj için state
   const { colors } = useAppSelector(selectTheme);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [studentStatus, setStudentStatus] = useState<string | null>(null); // Sadece durum tutuyoruz
+  const [forceUpdate, setForceUpdate] = useState(false); // Modal'ı zorla açmak için
+
+  const openModal = () => setModalVisible(true);
+  const closeModal = () => setModalVisible(false);
+
+  const [approvalModalVisible, setApprovalModalVisible] = useState(false);
+  const [studentStatusModalVisible, setStudentStatusModalVisible] = useState(false);
+  
+  const openApprovalModal = () => setApprovalModalVisible(true);
+  const closeApprovalModal = () => setApprovalModalVisible(false);
+  
+  const openStudentStatusModal = () => setStudentStatusModalVisible(true);
+  const closeStudentStatusModal = () => {
+    setStudentStatusModalVisible(false);
+    setForceUpdate(false); // Modal kapatıldığında güncellemeyi sıfırla
+  };
 
   useEffect(() => {
     const subscriber = auth().onAuthStateChanged(authUser => {
@@ -63,10 +81,11 @@ const ProfileScreen = () => {
       );
 
       if (response.success) {
-        setIsVerified(true);
+        setIsVerified(true); // Kullanıcı doğrulandıysa isVerified true yapılır
+        openStudentStatusModal(); // Doğrulama başarılıysa öğrenci durumu modalı açılır
       } else if (response.requiresApproval) {
-        setModalMessage(response.message); // Backend’den gelen mesajı al
-        setModalVisible(true);
+        setModalMessage(response.message); // Backend’den gelen mesaj set edilir
+        openApprovalModal(); // Kullanıcı onay gerektiriyorsa approval modalı açılır
       } else {
         // Kullanıcı mailto bağlantısı ile yönlendirilecek
         Alert.alert('Hata', `${response.message}`, [
@@ -79,8 +98,8 @@ const ProfileScreen = () => {
           },
           { text: 'Tamam', style: 'cancel' },
         ]);
-
-        await handleSignOut();
+      
+        await handleSignOut(); // Kullanıcıyı çıkış yaptır
       }
     } catch (error) {
       console.error('Verification error:', error);
@@ -129,27 +148,48 @@ const ProfileScreen = () => {
     }
   };
 
+
   const styles = getStyles(colors);
 
   return (
     <>
       <Divider orientation="horizontal" stroke={0.5} />
       <ApprovalModal
-        visible={modalVisible}
-        message={modalMessage} // Backend'den gelen mesajı modal’a geçir
-        onApprove={handleApprove}
-        onCancel={handleCancel}
+        visible={approvalModalVisible}
+        message={modalMessage}
+        onApprove={() => {
+          setApprovalModalVisible(false);
+          // Approval işlemleri...
+        }}
+        onCancel={handleSignOut}
+      />
+      <StudentStatusModal
+        visible={studentStatusModalVisible}
+        onClose={closeStudentStatusModal}
+        colors={colors}        
+        onStatusChange={(newStatus) => setStudentStatus(newStatus)}
+        forceUpdate={forceUpdate}
       />
       <ScrollView
         contentContainerStyle={styles.container}
         showsVerticalScrollIndicator={false}>
         {user && isVerified ? (
-          <View style={styles.profileContainer}>
-            <Text style={styles.userName}>
-              {user.displayName || 'Kullanıcı'}
-            </Text>
-            <Text style={styles.userEmail}>{user.email}</Text>
-          </View>
+          <>
+            <View style={styles.profileContainer}>
+              <Text style={styles.userName}>
+                {user.displayName || 'Kullanıcı'}
+              </Text>
+              <Text style={styles.userEmail}>{user.email}</Text>
+              <TouchableOpacity onPress={() => { 
+                setForceUpdate(true); // Güncelleme amacıyla modal'ı aç
+                openStudentStatusModal();
+              }}>
+                <Text style={styles.userStatus}>
+                  {studentStatus}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </>
         ) : (
           <LoginScreen />
         )}
@@ -185,6 +225,11 @@ const getStyles = (colors: { background: any; primary: any; text: any }) =>
       marginTop: 10,
       color: 'gray',
     },
+    userStatus: {
+      fontSize: 16,
+      color: 'gray',
+      marginTop: 10,
+    },
     footer: {
       paddingBottom: 20,
       paddingHorizontal: 20,
@@ -200,6 +245,18 @@ const getStyles = (colors: { background: any; primary: any; text: any }) =>
       color: colors.text || '#fff',
       fontSize: 16,
       fontWeight: '600',
+    },
+    updateStatusButton: {
+      backgroundColor: colors.primary || '#007BFF',
+      padding: 15,
+      borderRadius: 10,
+      alignItems: 'center',
+      marginTop: 20,
+    },
+    updateStatusButtonText: {
+      color: colors.text || '#fff',
+      fontSize: 16,
+      fontWeight: 'bold',
     },
   });
 
