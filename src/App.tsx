@@ -23,14 +23,13 @@ import en from './i18n/en.json';
 import tr from './i18n/tr.json';
 import { FormatIcu } from '@tolgee/format-icu';
 import '@formatjs/intl-locale/polyfill';
-import '@formatjs/intl-pluralrules/polyfill';
 
 const tolgee = Tolgee().use(DevTools()).use(FormatIcu()).init({
   language: 'en',
 
   // for development
-  apiUrl: TOLGEE_API_URL,
-  apiKey: TOLGEE_API_KEY,
+  // apiUrl: TOLGEE_API_URL,
+  // apiKey: TOLGEE_API_KEY,
 
   staticData: { en, tr },
 });
