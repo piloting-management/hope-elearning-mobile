@@ -5,8 +5,8 @@ import {
   useRoute,
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { BookmarkIcon, Share2Icon } from 'lucide-react-native';
-import { Dimensions } from 'react-native';
+import { BookmarkIcon, MenuIcon, Share2Icon } from 'lucide-react-native';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast, { ToastConfig } from 'react-native-toast-message';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
@@ -25,14 +25,18 @@ import { RootStackParamList } from './navigations';
 import ResumeCourseScreen from './features/course/ResumeCourseScreen';
 import ProfileScreen from './features/profile/ProfileScreen';
 import React, { useState } from 'react';
-// import { createDrawerNavigator } from '@react-navigation/drawer';
 import FloatingButtonWithForm from './components/ui/FloatingButtonWithForm';
+import DrawerContent from './DrawerContent';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 // const Drawer = createDrawerNavigator();
 const screen = Dimensions.get('window');
 
-const StackNavigator = () => {
+type StackNavigatorProps = {
+  toggleDrawer: () => void;
+};
+
+const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
   const theme = useAppSelector(selectTheme);
 
   return (
@@ -49,29 +53,32 @@ const StackNavigator = () => {
       }}>
       <Stack.Screen
         name="MainTabs"
-        component={MainTabs}
         options={{
-          title: 'Back',
+          headerTitle: () => null,
           headerShown: false,
+          headerLeft: () => (
+            <TouchableOpacity onPress={toggleDrawer}>
+              <MenuIcon size={24} color={theme.colors.text} />
+            </TouchableOpacity>
+          ),
           animation: 'fade',
-        }}
-      />
+        }}>
+        {() => <MainTabs toggleDrawer={toggleDrawer} />}
+      </Stack.Screen>
       <Stack.Screen
         name="BlogDetail"
         component={PostDetailScreen}
         options={({ route }) => ({
           headerBackTitleVisible: false,
           title: '',
-          headerRight: props => {
-            return (
-              <Item
-                title="Share"
-                iconName="share"
-                IconComponent={Share2Icon as any}
-                color={props.tintColor}
-              />
-            );
-          },
+          headerRight: props => (
+            <Item
+              title="Share"
+              iconName="share"
+              IconComponent={Share2Icon as any}
+              color={props.tintColor}
+            />
+          ),
         })}
       />
       <Stack.Screen
@@ -91,24 +98,22 @@ const StackNavigator = () => {
         options={({ route }) => ({
           headerBackTitleVisible: false,
           title: '',
-          headerRight: props => {
-            return (
-              <HeaderButtons left>
-                <Item
-                  title="Bookmark"
-                  iconName="bookmark"
-                  IconComponent={BookmarkIcon as any}
-                  color={props.tintColor}
-                />
-                <Item
-                  title="Share"
-                  iconName="share"
-                  IconComponent={Share2Icon as any}
-                  color={props.tintColor}
-                />
-              </HeaderButtons>
-            );
-          },
+          headerRight: props => (
+            <HeaderButtons left>
+              <Item
+                title="Bookmark"
+                iconName="bookmark"
+                IconComponent={BookmarkIcon as any}
+                color={props.tintColor}
+              />
+              <Item
+                title="Share"
+                iconName="share"
+                IconComponent={Share2Icon as any}
+                color={props.tintColor}
+              />
+            </HeaderButtons>
+          ),
         })}
       />
       <Stack.Screen
@@ -117,44 +122,27 @@ const StackNavigator = () => {
         options={({ route }) => ({
           headerBackTitleVisible: false,
           title: '',
-          headerRight: props => {
-            return (
-              <HeaderButtons left>
-                <Item
-                  title="Bookmark"
-                  iconName="bookmark"
-                  IconComponent={BookmarkIcon as any}
-                  color={props.tintColor}
-                />
-                <Item
-                  title="Share"
-                  iconName="share"
-                  IconComponent={Share2Icon as any}
-                  color={props.tintColor}
-                />
-              </HeaderButtons>
-            );
-          },
+          headerRight: props => (
+            <HeaderButtons left>
+              <Item
+                title="Bookmark"
+                iconName="bookmark"
+                IconComponent={BookmarkIcon as any}
+                color={props.tintColor}
+              />
+              <Item
+                title="Share"
+                iconName="share"
+                IconComponent={Share2Icon as any}
+                color={props.tintColor}
+              />
+            </HeaderButtons>
+          ),
         })}
       />
     </Stack.Navigator>
   );
 };
-
-// const DrawerNavigation = () => {
-//   return (
-//     <Drawer.Navigator
-//       screenOptions={{
-//         drawerStyle: {
-//           backgroundColor: '#fff',
-//           width: 250,
-//         },
-//       }}>
-//       <Drawer.Screen name="Home" component={StackNavigator} />
-//       <Drawer.Screen name="Profile" component={ProfileScreen} />
-//     </Drawer.Navigator>
-//   );
-// };
 
 const MainNavigation = () => {
   const navigationRef = useNavigationContainerRef();
@@ -173,18 +161,28 @@ const MainNavigation = () => {
     info: ToastInfoLayout,
   };
 
- // FloatingButtonWithForm'un gösterileceği ekranlar
   const floatingButtonVisibleRoutes = ['Home','Blogs','Learnings'];
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setIsDrawerOpen(!isDrawerOpen);
+  };
 
   return (
     <>
       <NavigationContainer ref={navigationRef} theme={theme}  onStateChange={() => {
-    const route = navigationRef.getCurrentRoute();
-    setCurrentRoute(route?.name || null);
-  }}>
-        <CustomStatusBar />
-        {/* <DrawerNavigation /> */}
-        <StackNavigator />
+        const route = navigationRef.getCurrentRoute();
+        setCurrentRoute(route?.name || null);
+      }}>
+     {/* Custom Drawer */}
+      {isDrawerOpen && (
+        <DrawerContent toggleDrawer={toggleDrawer} navigation={navigationRef} />
+      )}
+        {/* Ana İçerik */}
+        <View style={styles.content}>
+          <StackNavigator toggleDrawer={toggleDrawer} />
+        </View>
       </NavigationContainer>
       {floatingButtonVisibleRoutes.includes(currentRoute || '') && (
         <FloatingButtonWithForm />
@@ -199,3 +197,14 @@ const MainNavigation = () => {
 };
 
 export default MainNavigation;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    position: 'relative',
+  },
+  content: {
+    flex: 1,
+    zIndex: 1,
+  },
+});
