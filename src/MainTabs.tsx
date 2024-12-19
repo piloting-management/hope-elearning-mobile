@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { BellIcon, MoonIcon, SunIcon } from 'lucide-react-native';
+import { BellIcon, MenuIcon, MoonIcon, SunIcon } from 'lucide-react-native';
 import {
   BookOpenIcon,
   HomeIcon,
@@ -25,12 +25,12 @@ import { useAppDispatch, useAppSelector } from './lib/hooks';
 import { BottomTabParamList } from './navigations';
 import auth from '@react-native-firebase/auth';
 import { LogOut } from 'lucide-react-native';
-import { Alert } from 'react-native';
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import LanguageSwitcher from './components/ui/LanguageSwitcher';
 
 const Tab = createBottomTabNavigator<BottomTabParamList>();
 
-const MainTabs = () => {
+const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
   const dispatch = useAppDispatch();
   const { dark, colors } = useAppSelector(selectTheme);
 
@@ -51,7 +51,13 @@ const MainTabs = () => {
         component={HomeScreen}
         options={{
           headerTitleAlign: 'left',
-          headerTitle: props => <HeaderLogo {...props} />,
+          headerTitle: () => (
+            <View style={styles.headerContainer}>
+              <TouchableOpacity onPress={toggleDrawer} style={styles.menuIcon}>
+                <MenuIcon size={24} color={colors.text} />
+              </TouchableOpacity>
+            </View>
+          ),
           tabBarIcon: props => {
             if (props.focused) {
               return <HomeSolidIcon {...props} />;
@@ -107,6 +113,15 @@ const MainTabs = () => {
         name="Blogs"
         component={PostListScreen}
         options={{
+          headerTitleAlign: 'left',
+          headerTitle: () => (
+            <View style={styles.headerContainer}>
+              <TouchableOpacity onPress={toggleDrawer} style={styles.menuIcon}>
+                <MenuIcon size={24} color={colors.text} />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Blogs</Text>
+            </View>
+          ),
           tabBarIcon: props => {
             if (props.focused) {
               return <NewspaperSolidIcon {...props} />;
@@ -120,7 +135,15 @@ const MainTabs = () => {
         name="Learnings"
         component={MyCoursesScreen}
         options={{
-          headerTitle: 'My Courses',
+          headerTitleAlign: 'left',
+          headerTitle: () => (
+            <View style={styles.headerContainer}>
+              <TouchableOpacity onPress={toggleDrawer} style={styles.menuIcon}>
+                <MenuIcon size={24} color={colors.text} />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>My Courses</Text>
+            </View>
+          ),
           tabBarIcon: props => {
             if (props.focused) {
               return <BookOpenSolidIcon {...props} />;
@@ -133,6 +156,15 @@ const MainTabs = () => {
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerTitleAlign: 'left',
+          headerTitle: () => (
+            <View style={styles.headerContainer}>
+              <TouchableOpacity onPress={toggleDrawer} style={styles.menuIcon}>
+                <MenuIcon size={24} color={colors.text} />
+              </TouchableOpacity>
+              <Text style={styles.headerTitle}>Profile</Text>
+            </View>
+          ),
           tabBarIcon: props => {
             if (props.focused) {
               return <UserSolidIcon {...props} />;
@@ -146,3 +178,23 @@ const MainTabs = () => {
 };
 
 export default MainTabs;
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    flexDirection: 'row', 
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative', 
+    width: '100%',
+  },
+  menuIcon: {
+    position: 'absolute',
+    left: 0
+  },
+  headerTitle: {
+    marginLeft: '30%',
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+});
+
