@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1093841205151",
+    "project_id": "hope-elearning-75950",
+    "storage_bucket": "hope-elearning-75950.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1093841205151:android:fe686a65d6d832e681efaa",
+        "android_client_info": {
+          "package_name": "com.test.hopeelearning"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKRZOIgjrqx4KeGMMeNDAOw8cX7g0k95o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

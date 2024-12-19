@@ -14,6 +14,7 @@ export async function makeApiRequest({
 }: MakeApiRequestProps): Promise<Response> {
   // Benzersiz cihaz kimliğini al
   const deviceId = await getUniqueId();
+  console.log('🚀 ~ deviceId:', deviceId);
 
   let requestOptions: RequestInit = {
     ...options,
@@ -23,6 +24,7 @@ export async function makeApiRequest({
       'device-id': deviceId, // Device-Id header'ını ekle
     },
   };
+  console.log('🚀 ~ token:', token);
 
   const requestUrl = `${API_URL}${url}`;
 
@@ -32,9 +34,10 @@ export async function makeApiRequest({
 
   try {
     const response = await fetch(requestUrl, requestOptions);
+    console.log('🚀 ~ response:', response);
 
     // Response durumu başarılı mı?
-    console.log(`API Response Status: ${response.status}`);
+    console.log(`API Response Status22: ${response.status}`);
     const contentType = response.headers.get('content-type');
     if (response.status === 201 || response.status === 204 || !contentType) {
       // Eğer 201 Created veya 204 No Content dönerse ve body boşsa JSON parse etmeye çalışma

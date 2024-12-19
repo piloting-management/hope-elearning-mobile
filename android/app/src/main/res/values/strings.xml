@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Hope</string>
+    <string name="facebook_app_id">465501935912162</string>
+    <string name="facebook_client_token">78e6c6aa9e11ba8d95cebe963b1476bb</string>
 </resources>
