@@ -34,10 +34,13 @@ export async function getLessonBySlug(slug: string, signal?: AbortSignal) {
   return (await resp.json()) as Lesson; // Assuming `Lesson` is a defined type
 }
 
-export async function getCourses(params: SearchParams, signal?: AbortSignal) {
+export async function getCourses(
+  params: SearchParams,
+  signal?: AbortSignal
+): Promise<Page<Course>> {
   const query = buildQueryParams(params);
-
   const url = `/content/courses${query}`;
+  console.log('Generated URL:', url);
 
   const resp = await makeApiRequest({
     url,
@@ -46,15 +49,38 @@ export async function getCourses(params: SearchParams, signal?: AbortSignal) {
     },
   });
 
+  console.log('API Response Raw:', resp);
+
   await validateApiResponse(resp);
 
-  return (await resp.json()) as Page<Course>;
+  const data = await resp.json();
+  console.log('Parsed Data:', data);
+
+  if (!data.contents || !Array.isArray(data.contents)) {
+    throw new Error(
+      'API response does not contain "contents" or it is not an array.'
+    );
+  }
+
+  // Gelen verilerde subject nesnesinden subjectId ekliyoruz
+  const enhancedContents = data.contents.map((course: Course) => ({
+    ...course,
+    subjectId: course.subject?.id || null, // subject varsa id'sini ekliyoruz, yoksa null
+  }));
+
+  console.log('Enhanced Contents:', enhancedContents);
+
+  // Enhanced içerik ile yeni data döndürüyoruz
+  return {
+    ...data,
+    contents: enhancedContents,
+  };
 }
 
 export async function courseEnroll(
   courseId: string,
   token: string,
-  signal?: AbortSignal,
+  signal?: AbortSignal
 ) {
   const url = `/content/courses/${courseId}/enroll`;
 
@@ -67,12 +93,12 @@ export async function courseEnroll(
       },
       signal,
     },
-    token, // Token'ı makeApiRequest'e geçiyoruz
+    token,
   });
 
   await validateApiResponse(resp);
 
-  return await resp.json(); // Başarılı durumda cevap döndürülebilir
+  return await resp.json();
 }
 
 export async function getEnrolledCourses(token: string) {
@@ -117,12 +143,9 @@ export async function enrollCourse(courseId: number) {
 
   await validateApiResponse(resp);
 
-  // Handle case where there's no content in the response (e.g., 201 Created)
   if (resp.status === 201 || resp.status === 204) {
-    console.log('Course enrollment succeeded with no response body.');
-    return { success: true }; // Return a success flag or object
+    return { success: true };
   }
 
-  // Otherwise, return the parsed JSON
   return await resp.json();
 }

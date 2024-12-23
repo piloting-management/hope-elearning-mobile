@@ -33,18 +33,21 @@ import {
 } from 'react-native';
 import { selectTheme } from '../themeSlice';
 import { useTranslate } from '@tolgee/react';
+import { store } from '@/lib/store';
+import { setCategories, setCourses, setSubjects } from '../contentSlice';
+import { getSubjects } from '@/lib/services/SubjectApi';
 
 const fetchHomeData = async (signal?: AbortSignal) => {
-  const categoriesPromise = getCategories(
-    {
-      limit: 5,
-    },
-    signal,
-  );
+  const categoriesPromise = getCategories({}, signal).then((data) => {
+    store.dispatch(setCategories(data.contents));
+    return data;
+  });
 
-  const topCoursesPromise = getCourses(
-    { orderBy: 'enrollment', limit: 5 },
-    signal,
+  const coursesPromise = getCourses({ orderBy: 'enrollment' }, signal).then(
+    (data) => {
+      store.dispatch(setCourses(data.contents));
+      return data;
+    }
   );
 
   const recentPostsPromise = getPosts(
@@ -52,13 +55,19 @@ const fetchHomeData = async (signal?: AbortSignal) => {
       orderBy: 'publishedAt',
       limit: 5,
     },
-    signal,
+    signal
   );
+
+  const subjectsPromise = getSubjects({}, signal).then((data) => {
+    store.dispatch(setSubjects(data.contents));
+    return data;
+  });
 
   return await Promise.all([
     categoriesPromise,
-    topCoursesPromise,
+    coursesPromise,
     recentPostsPromise,
+    subjectsPromise,
   ]);
 };
 
@@ -78,7 +87,8 @@ const Heading = ({ title, seeAll }: HeadingProps) => {
           style={{
             ...styles.headingTitle,
             color: colors.text,
-          }}>
+          }}
+        >
           {title}
         </Text>
       </View>
@@ -88,7 +98,8 @@ const Heading = ({ title, seeAll }: HeadingProps) => {
             style={{
               color: colors.primary,
               ...DefaultStyles.fonts.medium,
-            }}>
+            }}
+          >
             See all
           </Text>
         </TouchableOpacity>
@@ -169,13 +180,15 @@ const HomeScreen = () => {
               refetch();
             }}
           />
-        }>
+        }
+      >
         <View style={[themeStyle, styles.container]}>
           <Text
             style={{
               ...styles.searchTitle,
               color: colors.text,
-            }}>
+            }}
+          >
             {t('wantToLearn', 'DEFAULT VALUE')}
           </Text>
 
@@ -184,11 +197,13 @@ const HomeScreen = () => {
           <TouchableWithoutFeedback
             onPress={() => {
               rootNavigation.navigate('CourseList');
-            }}>
+            }}
+          >
             <View
               style={{
                 ...styles.searchContainer,
-              }}>
+              }}
+            >
               <SearchIcon color={'dimgray'} />
               <TextInput
                 style={{ ...styles.searchInput }}
@@ -226,7 +241,7 @@ const HomeScreen = () => {
           <FlatList
             data={courses.contents}
             renderItem={renderCourseItem}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={(item) => item.id.toString()}
             horizontal={true}
             ItemSeparatorComponent={listItemSeparator}
             showsHorizontalScrollIndicator={false}
@@ -246,7 +261,7 @@ const HomeScreen = () => {
           <FlatList
             data={posts.contents}
             renderItem={renderPostItem}
-            keyExtractor={item => item.id.toString()}
+            keyExtractor={(item) => item.id.toString()}
             horizontal={true}
             ItemSeparatorComponent={listItemSeparator}
             showsHorizontalScrollIndicator={false}

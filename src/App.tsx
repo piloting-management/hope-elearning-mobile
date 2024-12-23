@@ -26,11 +26,9 @@ import '@formatjs/intl-locale/polyfill';
 
 const tolgee = Tolgee().use(DevTools()).use(FormatIcu()).init({
   language: 'en',
-
   // for development
   // apiUrl: TOLGEE_API_URL,
   // apiKey: TOLGEE_API_KEY,
-
   staticData: { en, tr },
 });
 
@@ -76,15 +74,12 @@ const App = () => {
           focusManager.setFocused(false);
         }
         appState = nextAppState;
-
-        // console.log(appState);
-      },
+      }
     );
 
-    onlineManager.setEventListener(setOnline => {
-      return addEventListener(nextState => {
+    onlineManager.setEventListener((setOnline) => {
+      return addEventListener((nextState) => {
         setOnline(!!nextState.isConnected);
-        console.log(nextState.isConnected ? 'connected' : 'disconnected');
       });
     });
 

@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityIndicator, View, StyleSheet, Text, Alert } from 'react-native';
 import { Button } from '@/components/ui/Button';
-import { ToastAndroid } from 'react-native';
 import { Course } from '@/lib/models';
 import auth from '@react-native-firebase/auth';
-import { enrollCourse } from '@/lib/services/CourseApi'; // Import the new method
-import { useNavigation } from '@react-navigation/native'; // Navigation kullanımı için
+import { enrollCourse } from '@/lib/services/CourseApi';
+import { useNavigation } from '@react-navigation/native';
 
 type EnrollCourseButtonProps = {
-  course: Course; // course prop'unu zorunlu olarak alıyor
+  course: Course;
   children?: React.ReactNode;
 };
 
@@ -20,7 +19,7 @@ const EnrollCourseButton: React.FC<EnrollCourseButtonProps> = ({
   const [userToken, setUserToken] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState(auth().currentUser);
   const [sessionCookie, setSessionCookie] = useState<string | null>(null);
-  const navigation = useNavigation(); // Navigation'ı burada doğru şekilde tanımladık
+  const navigation = useNavigation();
 
   useEffect(() => {
     const fetchTokenAndSession = async () => {
@@ -36,7 +35,7 @@ const EnrollCourseButton: React.FC<EnrollCourseButtonProps> = ({
 
     fetchTokenAndSession();
 
-    const subscriber = auth().onAuthStateChanged(user => {
+    const subscriber = auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
       if (user) {
         user.getIdToken().then(setUserToken);
@@ -50,7 +49,7 @@ const EnrollCourseButton: React.FC<EnrollCourseButtonProps> = ({
     if (!currentUser) {
       Alert.alert(
         'Yetkisiz erişim',
-        'Bu işlemi gerçekleştirmek için giriş yapmalısınız.',
+        'Bu işlemi gerçekleştirmek için giriş yapmalısınız.'
       );
       return;
     }
@@ -58,14 +57,10 @@ const EnrollCourseButton: React.FC<EnrollCourseButtonProps> = ({
     try {
       setLoading(true);
 
-      // course.id'yi kullanarak kayıt işlemini başlatıyoruz
       const response = await enrollCourse(course.id);
-      console.log('response', response);
       if (response?.success || response) {
-        // Success durumunda bildirim göster
         Alert.alert('Başarılı', 'Kurs kaydı başarıyla tamamlandı.');
-        // Başarılı kayıt sonrası geri dön
-        navigation.goBack(); // Eğer navigate etmek istiyorsan, navigation'ı burada doğru şekilde kullan
+        navigation.goBack();
       } else {
         throw new Error('Kurs kaydı sırasında bir hata oluştu.');
       }

@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import { useAppSelector } from '@/lib/hooks';
 import { selectTheme } from './features/themeSlice';
+import { RootState } from './lib/store';
+import { Category, Course, Subject } from './lib/models';
 
 const { width } = Dimensions.get('window');
 
@@ -21,24 +23,9 @@ type MenuItem = {
   subMenu?: MenuItem[];
 };
 
-const menuData: MenuItem[] = [
-  { title: 'Home', route: 'Home' },
-  { title: 'Blogs', route: 'Blogs' },
-  { title: 'Profile', route: 'Profile' },
-  { title: 'My Courses', route: 'Learnings' },
-  {
-    title: 'Settings',
-    subMenu: [
-      { title: 'Account', route: 'CourseDetail' },
-      { title: 'Notifications', route: 'ResumeCourse' },
-      { title: 'Privacy', route: 'MainTabs' },
-    ],
-  },
-];
-
 type DrawerContentProps = {
   toggleDrawer: () => void;
-  navigation: any; // Navigation prop
+  navigation: any;
 };
 
 const DrawerContent: React.FC<DrawerContentProps> = ({
@@ -46,14 +33,46 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
   navigation,
 }) => {
   const { colors } = useAppSelector(selectTheme);
+
+  const categories = useAppSelector(
+    (state: RootState) => state.content.categories
+  );
+
+  const subjects = useAppSelector((state: RootState) => state.content.subjects);
+
+  const courses = useAppSelector((state: RootState) => state.content.courses);
+
   const [currentMenu, setCurrentMenu] = useState<MenuItem[] | null>(null);
   const pan = useRef(new Animated.Value(0)).current;
+  const menuData: MenuItem[] = categories.map((category: Category) => {
+    const categorySubjects = subjects.filter(
+      (subject: Subject) => subject.categoryId === category.id
+    );
+
+    return {
+      title: category.name,
+      subMenu: categorySubjects.map((subject) => {
+        const subjectCourses = courses.filter(
+          (course: Course) => course.subjectId === subject.id
+        );
+
+        return {
+          title: subject.name,
+          subMenu: subjectCourses.map((course) => ({
+            title: course.title,
+            route: 'CourseDetail',
+            params: { courseId: course.id },
+          })),
+        };
+      }),
+    };
+  });
 
   const handleMenuClick = (item: MenuItem) => {
     if (item.subMenu) {
       setCurrentMenu(item.subMenu);
     } else if (item.route) {
-      navigation.navigate(item.route); // Sayfa yönlendirme
+      // navigation.navigate(item.route, item.params); // Sayfa yönlendirme
       toggleDrawer(); // Drawer'ı kapat
     }
   };
@@ -88,7 +107,9 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
           {...panResponder.panHandlers}
         >
           {/* Header */}
-          <SafeAreaView style={[styles.header, { backgroundColor: colors.primary }]}>
+          <SafeAreaView
+            style={[styles.header, { backgroundColor: colors.primary }]}
+          >
             <Text style={styles.headerText}>Menu</Text>
           </SafeAreaView>
 
@@ -117,7 +138,9 @@ const DrawerContent: React.FC<DrawerContentProps> = ({
 
           {/* Footer */}
           <TouchableOpacity onPress={toggleDrawer} style={styles.footer}>
-            <Text style={[styles.closeText, { color: colors.primary }]}>Close</Text>
+            <Text style={[styles.closeText, { color: colors.primary }]}>
+              Close
+            </Text>
           </TouchableOpacity>
         </Animated.View>
       </View>

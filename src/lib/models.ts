@@ -48,14 +48,6 @@ export interface Tag {
   audit?: Audit;
 }
 
-export interface Category {
-  id: number;
-  slug: string;
-  name: string;
-  courseCount?: string;
-  audit?: Audit;
-}
-
 export interface Post {
   id: number;
   cover?: string;
@@ -79,6 +71,22 @@ export interface PostMeta {
   viewCount: string;
 }
 
+export interface Category {
+  id: number;
+  slug: string;
+  name: string;
+  courseCount?: string;
+  audit?: Audit;
+}
+
+export interface Subject {
+  id: number;
+  name: string;
+  slug: string;
+  categoryId: number; // Parent ID olarak kullanılır
+  category: Category; // Tüm kategori bilgisi, isteğe bağlı olarak eklenir
+}
+
 export interface Course {
   id: number;
   title: string;
@@ -91,11 +99,12 @@ export interface Course {
   access: CourseAccess;
   status: CourseStatus;
   publishedAt?: string;
-  category?: Category;
+  subjectId: number; // `course` bir `subject`e bağlı
   authors?: User[];
   chapters?: Chapter[];
   meta?: CourseMeta;
   audit?: Audit;
+  subject?: Subject;
 }
 
 export interface CourseMeta {
@@ -158,7 +167,7 @@ export interface QuizAnswer {
 
 export interface EnrolledCourse {
   course: Course;
-  progress: number; // Kurs ilerlemesi
-  resumeLesson?: Lesson; // Devam edilen ders (opsiyonel)
-  audit?: Audit; // Kayıtla ilgili zaman damgaları (opsiyonel)
+  progress: number;
+  resumeLesson?: Lesson;
+  audit?: Audit;
 }
