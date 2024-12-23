@@ -50,7 +50,8 @@ const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
           fontSize: 18,
           ...DefaultStyles.fonts.medium,
         },
-      }}>
+      }}
+    >
       <Stack.Screen
         name="MainTabs"
         options={{
@@ -62,7 +63,8 @@ const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
             </TouchableOpacity>
           ),
           animation: 'fade',
-        }}>
+        }}
+      >
         {() => <MainTabs toggleDrawer={toggleDrawer} />}
       </Stack.Screen>
       <Stack.Screen
@@ -71,7 +73,7 @@ const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
         options={({ route }) => ({
           headerBackTitleVisible: false,
           title: '',
-          headerRight: props => (
+          headerRight: (props) => (
             <Item
               title="Share"
               iconName="share"
@@ -85,11 +87,12 @@ const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
         name="CourseList"
         component={CourseListScreen}
         options={({ route }) => ({
-          headerBackTitleVisible: false,
-          title: 'Courses',
-          headerTitleAlign: 'left',
           headerTitle: CourseListHeaderTitle,
-          headerRight: CourseListHeaderRight,
+          // headerBackTitleVisible: false,
+          // title: 'Courses',
+          // headerTitleAlign: 'left',
+          // headerTitle: CourseListHeaderTitle,
+          // headerRight: CourseListHeaderRight,
         })}
       />
       <Stack.Screen
@@ -98,7 +101,7 @@ const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
         options={({ route }) => ({
           headerBackTitleVisible: false,
           title: '',
-          headerRight: props => (
+          headerRight: (props) => (
             <HeaderButtons left>
               <Item
                 title="Bookmark"
@@ -122,7 +125,7 @@ const StackNavigator: React.FC<StackNavigatorProps> = ({ toggleDrawer }) => {
         options={({ route }) => ({
           headerBackTitleVisible: false,
           title: '',
-          headerRight: props => (
+          headerRight: (props) => (
             <HeaderButtons left>
               <Item
                 title="Bookmark"
@@ -149,7 +152,7 @@ const MainNavigation = () => {
   const theme = useAppSelector(selectTheme);
 
   const [currentRoute, setCurrentRoute] = useState<string | null>(null);
-  
+
   const insets = useSafeAreaInsets();
 
   const headerHeight = getDefaultHeaderHeight(screen, false, insets.top);
@@ -161,7 +164,7 @@ const MainNavigation = () => {
     info: ToastInfoLayout,
   };
 
-  const floatingButtonVisibleRoutes = ['Home','Blogs','Learnings'];
+  const floatingButtonVisibleRoutes = ['Home', 'Blogs', 'Learnings'];
 
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
@@ -171,14 +174,21 @@ const MainNavigation = () => {
 
   return (
     <>
-      <NavigationContainer ref={navigationRef} theme={theme}  onStateChange={() => {
-        const route = navigationRef.getCurrentRoute();
-        setCurrentRoute(route?.name || null);
-      }}>
-     {/* Custom Drawer */}
-      {isDrawerOpen && (
-        <DrawerContent toggleDrawer={toggleDrawer} navigation={navigationRef} />
-      )}
+      <NavigationContainer
+        ref={navigationRef}
+        theme={theme}
+        onStateChange={() => {
+          const route = navigationRef.getCurrentRoute();
+          setCurrentRoute(route?.name || null);
+        }}
+      >
+        {/* Custom Drawer */}
+        {isDrawerOpen && (
+          <DrawerContent
+            toggleDrawer={toggleDrawer}
+            navigation={navigationRef}
+          />
+        )}
         {/* Ana İçerik */}
         <View style={styles.content}>
           <StackNavigator toggleDrawer={toggleDrawer} />

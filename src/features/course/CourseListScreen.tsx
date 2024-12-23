@@ -3,7 +3,11 @@ import { Divider } from '@/components/ui/Divider';
 import { ErrorView } from '@/components/ui/ErrorView';
 import { Loading } from '@/components/ui/Loading';
 import { Spacer } from '@/components/ui/Spacer';
-import { useAppSelector, useResetInfiniteQuery } from '@/lib/hooks';
+import {
+  useAppDispatch,
+  useAppSelector,
+  useResetInfiniteQuery,
+} from '@/lib/hooks';
 import { Course, Page } from '@/lib/models';
 import { getCourses } from '@/lib/services/CourseApi';
 import { RootStackParamList } from '@/navigations';
@@ -22,9 +26,16 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { selectTheme } from '../themeSlice';
+import { setSearchQuery } from '../contentSlice';
 
 const CourseListScreen = () => {
   const { colors } = useAppSelector(selectTheme);
+  const { searchQuery } = useAppSelector((state) => state.content);
+
+  const dispatch = useAppDispatch();
+  useEffect(() => {
+    dispatch(setSearchQuery(''));
+  }, [dispatch]);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamList>>();
@@ -56,6 +67,12 @@ const CourseListScreen = () => {
       return lastPage.currentPage + 1;
     },
   });
+
+  const filteredCourses = data?.pages.flatMap((page) =>
+    page.contents.filter((course) =>
+      course.title.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  );
 
   const { resetQuery } = useResetInfiniteQuery<Page<Course>>([
     '/content/courses',
@@ -106,12 +123,14 @@ const CourseListScreen = () => {
 
     return (
       <FlatList
-        data={data.pages.flatMap(d => d.contents)}
+        // data={data.pages.flatMap((d) => d.contents)}
+        data={filteredCourses}
         renderItem={renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={(item) => item.id.toString()}
         refreshControl={
           <RefreshControl
-            refreshing={isFetching && !isFetchingNextPage}
+            // refreshing={isFetching && !isFetchingNextPage}
+            refreshing={isFetching}
             colors={[colors.primary]}
             tintColor={'gray'}
             onRefresh={() => {
@@ -139,7 +158,7 @@ const CourseListScreen = () => {
             )}
           </>
         }
-        onEndReached={info => {
+        onEndReached={(info) => {
           if (isFetching || !hasNextPage || isFetchNextPageError) {
             return;
           }

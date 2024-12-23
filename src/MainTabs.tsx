@@ -45,7 +45,8 @@ const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
           fontSize: 18,
           ...DefaultStyles.fonts.medium,
         },
-      }}>
+      }}
+    >
       <Tab.Screen
         name="Home"
         component={HomeScreen}
@@ -58,15 +59,14 @@ const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
               </TouchableOpacity>
             </View>
           ),
-          tabBarIcon: props => {
+          tabBarIcon: (props) => {
             if (props.focused) {
               return <HomeSolidIcon {...props} />;
             }
             return <HomeIcon {...props} />;
           },
-          headerRight: props => (
+          headerRight: (props) => (
             <HeaderButtons>
-              <LanguageSwitcher />
               <Item
                 title="Notification"
                 iconName="notification"
@@ -97,10 +97,10 @@ const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
                     .then(() => {
                       Alert.alert('Başarıyla çıkış yaptınız!');
                     })
-                    .catch(error => {
+                    .catch((error) => {
                       Alert.alert(
                         'Çıkış sırasında hata oluştu!',
-                        error.message,
+                        error.message
                       );
                     });
                 }}
@@ -122,7 +122,7 @@ const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
               <Text style={styles.headerTitle}>Blogs</Text>
             </View>
           ),
-          tabBarIcon: props => {
+          tabBarIcon: (props) => {
             if (props.focused) {
               return <NewspaperSolidIcon {...props} />;
             }
@@ -144,7 +144,7 @@ const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
               <Text style={styles.headerTitle}>My Courses</Text>
             </View>
           ),
-          tabBarIcon: props => {
+          tabBarIcon: (props) => {
             if (props.focused) {
               return <BookOpenSolidIcon {...props} />;
             }
@@ -165,7 +165,12 @@ const MainTabs = ({ toggleDrawer }: { toggleDrawer: () => void }) => {
               <Text style={styles.headerTitle}>Profile</Text>
             </View>
           ),
-          tabBarIcon: props => {
+          headerRight: (props) => (
+            <HeaderButtons>
+              <LanguageSwitcher />
+            </HeaderButtons>
+          ),
+          tabBarIcon: (props) => {
             if (props.focused) {
               return <UserSolidIcon {...props} />;
             }
@@ -181,15 +186,15 @@ export default MainTabs;
 
 const styles = StyleSheet.create({
   headerContainer: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative', 
+    position: 'relative',
     width: '100%',
   },
   menuIcon: {
     position: 'absolute',
-    left: 0
+    left: 0,
   },
   headerTitle: {
     marginLeft: '30%',
@@ -197,4 +202,3 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
 });
-

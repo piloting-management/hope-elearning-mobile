@@ -5,12 +5,14 @@ interface ContentState {
   categories: Category[];
   subjects: Subject[];
   courses: Course[];
+  searchQuery: string;
 }
 
 const initialState: ContentState = {
   categories: [],
   subjects: [],
   courses: [],
+  searchQuery: '',
 };
 
 const contentSlice = createSlice({
@@ -26,9 +28,13 @@ const contentSlice = createSlice({
     setCourses(state, action: PayloadAction<Course[]>) {
       state.courses = action.payload;
     },
+    setSearchQuery(state, action) {
+      state.searchQuery = action.payload;
+    },
   },
 });
 
-export const { setCategories, setSubjects, setCourses } = contentSlice.actions;
+export const { setCategories, setSubjects, setCourses, setSearchQuery } =
+  contentSlice.actions;
 
 export default contentSlice.reducer;

@@ -6,6 +6,7 @@
   "license": "MIT",
   "scripts": {
     "android": "react-native run-android",
+    "android-reverse": "adb reverse tcp:3080 tcp:3080 && react-native run-android",
     "ios": "react-native run-ios --mode Debug",
     "lint": "eslint .",
     "start": "react-native start",

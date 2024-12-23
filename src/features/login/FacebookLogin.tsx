@@ -18,23 +18,30 @@ const FacebookLogin = () => {
         'public_profile',
         'email',
       ]);
+      console.log('🚀 ~ handleFacebookLogin ~ result:', result);
       if (result.isCancelled) {
         throw new Error('Kullanıcı giriş işlemini iptal etti');
       }
 
       // Access token al
       const data = await AccessToken.getCurrentAccessToken();
+      console.log('🚀 ~ handleFacebookLogin ~ data:', data);
       if (!data || !data.accessToken) {
         throw new Error('Facebook erişim tokeni alınamadı');
       }
 
       // Facebook token ile Firebase giriş yap
       const facebookCredential = auth.FacebookAuthProvider.credential(
-        data.accessToken,
+        data.accessToken
+      );
+      console.log(
+        '🚀 ~ handleFacebookLogin ~ facebookCredential:',
+        facebookCredential
       );
       const userCredential = await auth().signInWithCredential(
-        facebookCredential,
+        facebookCredential
       );
+      console.log('🚀 ~ handleFacebookLogin ~ userCredential:', userCredential);
       const user = userCredential.user;
       const token = await user.getIdToken(); // Firebase token al
       const deviceId = await getUniqueId();
@@ -48,7 +55,7 @@ const FacebookLogin = () => {
       console.error('Giriş hatası:', error);
       Alert.alert(
         'Giriş başarısız!',
-        `Bir hata oluştu: ${error.message || 'Bilinmeyen hata'}.`,
+        `Bir hata oluştu: ${error.message || 'Bilinmeyen hata'}.`
       );
     } finally {
       setLoading(false);
