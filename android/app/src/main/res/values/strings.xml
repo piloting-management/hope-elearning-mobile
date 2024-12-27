@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">Hope</string>
+    <string name="app_name">hope-elearning</string>
     <string name="facebook_app_id">465501935912162</string>
     <string name="facebook_client_token">78e6c6aa9e11ba8d95cebe963b1476bb</string>
+    <string name="fb_login_protocol_scheme">fb465501935912162</string>
 </resources>

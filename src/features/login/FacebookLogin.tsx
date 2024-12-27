@@ -11,8 +11,8 @@ const FacebookLogin = () => {
 
   const handleFacebookLogin = async () => {
     try {
+      console.log('Facebook ile giriş yapılıyor...');
       setLoading(true);
-
       // Facebook ile giriş yapma
       const result = await LoginManager.logInWithPermissions([
         'public_profile',
