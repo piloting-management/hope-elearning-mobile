@@ -16,7 +16,7 @@ import { selectTheme } from '../../features/themeSlice';
 import { verifyUserWithApi } from '@/lib/services/LoginApi';
 import { getUniqueId } from 'react-native-device-info';
 import ApprovalModal from '@/components/ui/Approval';
-import StudentStatusModal from '@/components/ui/StudentStatusModal';
+import TitleModal from '@/components/ui/TitleModal';
 
 const ProfileScreen = () => {
   const [user, setUser] = useState(auth().currentUser);
@@ -24,26 +24,26 @@ const ProfileScreen = () => {
   const [modalMessage, setModalMessage] = useState(''); // Dinamik mesaj için state
   const { colors } = useAppSelector(selectTheme);
   const [modalVisible, setModalVisible] = useState(false);
-  const [studentStatus, setStudentStatus] = useState<string | null>(null); // Sadece durum tutuyoruz
+  const [title, setTitle] = useState<string | null>(null); // Sadece durum tutuyoruz
   const [forceUpdate, setForceUpdate] = useState(false); // Modal'ı zorla açmak için
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
   const [approvalModalVisible, setApprovalModalVisible] = useState(false);
-  const [studentStatusModalVisible, setStudentStatusModalVisible] = useState(false);
-  
+  const [titleModalVisible, setTitleModalVisible] = useState(false);
+
   const openApprovalModal = () => setApprovalModalVisible(true);
   const closeApprovalModal = () => setApprovalModalVisible(false);
-  
-  const openStudentStatusModal = () => setStudentStatusModalVisible(true);
-  const closeStudentStatusModal = () => {
-    setStudentStatusModalVisible(false);
+
+  const openTitleModal = () => setTitleModalVisible(true);
+  const closeTitleModal = () => {
+    setTitleModalVisible(false);
     setForceUpdate(false); // Modal kapatıldığında güncellemeyi sıfırla
   };
 
   useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(authUser => {
+    const subscriber = auth().onAuthStateChanged((authUser) => {
       setUser(authUser);
       if (authUser) {
         verifyUser(authUser);
@@ -55,16 +55,16 @@ const ProfileScreen = () => {
   const handleMailSend = (userEmail: string) => {
     const subject = encodeURIComponent(`Sorun: ${userEmail}`);
     const body = encodeURIComponent(
-      'Merhaba, cihazımın başka bir kullanıcıya ait olduğunu belirten bir hata aldım. Lütfen bu sorunu çözmeme yardımcı olun.',
+      'Merhaba, cihazımın başka bir kullanıcıya ait olduğunu belirten bir hata aldım. Lütfen bu sorunu çözmeme yardımcı olun.'
     );
 
     const mailtoURL = `mailto:account@thepiloting.com?subject=${subject}&body=${body}`;
 
-    Linking.openURL(mailtoURL).catch(err => {
+    Linking.openURL(mailtoURL).catch((err) => {
       console.error('Mail gönderme hatası:', err);
       Alert.alert(
         'Mail Gönderilemiyor',
-        'E-posta gönderimi sırasında bir hata oluştu. Lütfen cihazınızda varsayılan e-posta uygulamasının kurulu olduğundan emin olun.',
+        'E-posta gönderimi sırasında bir hata oluştu. Lütfen cihazınızda varsayılan e-posta uygulamasının kurulu olduğundan emin olun.'
       );
     });
   };
@@ -77,12 +77,12 @@ const ProfileScreen = () => {
         authUser.uid,
         authUser.email || '',
         deviceId,
-        false,
+        false
       );
 
       if (response.success) {
         setIsVerified(true); // Kullanıcı doğrulandıysa isVerified true yapılır
-        openStudentStatusModal(); // Doğrulama başarılıysa öğrenci durumu modalı açılır
+        openTitleModal(); // Doğrulama başarılıysa öğrenci durumu modalı açılır
       } else if (response.requiresApproval) {
         setModalMessage(response.message); // Backend’den gelen mesaj set edilir
         openApprovalModal(); // Kullanıcı onay gerektiriyorsa approval modalı açılır
@@ -98,7 +98,7 @@ const ProfileScreen = () => {
           },
           { text: 'Tamam', style: 'cancel' },
         ]);
-      
+
         await handleSignOut(); // Kullanıcıyı çıkış yaptır
       }
     } catch (error) {
@@ -117,7 +117,7 @@ const ProfileScreen = () => {
         user?.uid || '',
         user?.email || '',
         deviceId,
-        true,
+        true
       );
 
       if (approvalResult.success) {
@@ -148,7 +148,6 @@ const ProfileScreen = () => {
     }
   };
 
-
   const styles = getStyles(colors);
 
   return (
@@ -163,16 +162,17 @@ const ProfileScreen = () => {
         }}
         onCancel={handleSignOut}
       />
-      <StudentStatusModal
-        visible={studentStatusModalVisible}
-        onClose={closeStudentStatusModal}
-        colors={colors}        
-        onStatusChange={(newStatus) => setStudentStatus(newStatus)}
+      <TitleModal
+        visible={titleModalVisible}
+        onClose={closeTitleModal}
+        colors={colors}
+        onStatusChange={(newStatus) => setTitle(newStatus)}
         forceUpdate={forceUpdate}
       />
       <ScrollView
         contentContainerStyle={styles.container}
-        showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}
+      >
         {user && isVerified ? (
           <>
             <View style={styles.profileContainer}>
@@ -180,13 +180,13 @@ const ProfileScreen = () => {
                 {user.displayName || 'Kullanıcı'}
               </Text>
               <Text style={styles.userEmail}>{user.email}</Text>
-              <TouchableOpacity onPress={() => { 
-                setForceUpdate(true); // Güncelleme amacıyla modal'ı aç
-                openStudentStatusModal();
-              }}>
-                <Text style={styles.userStatus}>
-                  {studentStatus}
-                </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  setForceUpdate(true); // Güncelleme amacıyla modal'ı aç
+                  openTitleModal();
+                }}
+              >
+                <Text style={styles.userStatus}>{title}</Text>
               </TouchableOpacity>
             </View>
           </>

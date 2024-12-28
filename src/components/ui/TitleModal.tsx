@@ -9,9 +9,9 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import DropDownPicker from 'react-native-dropdown-picker'; // Modern dropdown
-import { getStudentStatusList, updateStudentStatus } from '@/lib/services/UserApi';
+import { getTitleList, updateTitle } from '@/lib/services/UserApi';
 
-interface StudentStatusModalProps {
+interface TitleModalProps {
   visible: boolean;
   onClose: () => void;
   colors: { background: string; primary: string; text: string };
@@ -19,42 +19,48 @@ interface StudentStatusModalProps {
   forceUpdate?: boolean;
 }
 
-const StudentStatusModal: React.FC<StudentStatusModalProps> = ({
+const TitleModal: React.FC<TitleModalProps> = ({
   visible,
   onClose,
   colors,
   onStatusChange,
   forceUpdate = false,
 }) => {
-  const [studentStatusList, setStudentStatusList] = useState<{ label: string; value: string }[]>([]);
+  const [titleList, setTitleList] = useState<
+    { label: string; value: string }[]
+  >([]);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dropdownOpen, setDropdownOpen] = useState(false); // Dropdown'un açık/kapalı durumu
   const [isInitialized, setIsInitialized] = useState(false); // İlk API kontrolü için flag
 
-  const fetchStudentStatusList = async () => {
+  const fetchTitleList = async () => {
     try {
       setIsLoading(true);
-  
-      const response = await getStudentStatusList();
-  
-      if (!response || !response.statuses || !Array.isArray(response.statuses)) {
+
+      const response = await getTitleList();
+
+      if (
+        !response ||
+        !response.statuses ||
+        !Array.isArray(response.statuses)
+      ) {
         throw new Error('Yanıt beklenen formatta değil');
       }
-  
+
       const formattedStatuses = response.statuses.map((status: string) => ({
         label: status,
         value: status,
       }));
       const defaultOption = { label: 'Seçiniz', value: '' };
-      setStudentStatusList([defaultOption, ...formattedStatuses]);
-      onStatusChange(response.currentStatus)
+      setTitleList([defaultOption, ...formattedStatuses]);
+      onStatusChange(response.currentStatus);
       if (!forceUpdate && response.currentStatus) {
         // Güncelleme zorlanmamışsa ve mevcut durum varsa modalı kapat
         onClose();
         return;
       }
-  
+
       setSelectedStatus(response.currentStatus || '');
       setIsInitialized(true);
     } catch (error) {
@@ -65,13 +71,12 @@ const StudentStatusModal: React.FC<StudentStatusModalProps> = ({
       setIsLoading(false);
     }
   };
-  
+
   useEffect(() => {
     if (visible && !isInitialized) {
-      fetchStudentStatusList();
+      fetchTitleList();
     }
   }, [visible]);
-  
 
   const handleSaveStatus = async () => {
     try {
@@ -81,8 +86,8 @@ const StudentStatusModal: React.FC<StudentStatusModalProps> = ({
         return;
       }
 
-      const response = await updateStudentStatus(selectedStatus);
-      onStatusChange(selectedStatus); 
+      const response = await updateTitle(selectedStatus);
+      onStatusChange(selectedStatus);
       Alert.alert('Başarılı');
       onClose(); // Modal'ı kapat
     } catch (error) {
@@ -104,17 +109,20 @@ const StudentStatusModal: React.FC<StudentStatusModalProps> = ({
     <Modal visible={visible} transparent animationType="slide">
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
-        <Text style={styles.title}>
-          {forceUpdate ? 'Öğrenci statüsü güncelle' : 'Öğrencinin statüsü?'}
-        </Text>
+          <Text style={styles.title}>
+            {forceUpdate ? 'Öğrenci statüsü güncelle' : 'Öğrencinin statüsü?'}
+          </Text>
           {isLoading ? (
-            <ActivityIndicator size="large" color={colors.primary || '#0000ff'} />
+            <ActivityIndicator
+              size="large"
+              color={colors.primary || '#0000ff'}
+            />
           ) : (
             <DropDownPicker
               open={dropdownOpen} // Dinamik state ile kontrol
               setOpen={setDropdownOpen} // Dropdown'u açıp kapatacak fonksiyon
               value={selectedStatus}
-              items={studentStatusList}
+              items={titleList}
               setValue={setSelectedStatus}
               placeholder="Seçiniz"
               style={styles.dropdown}
@@ -123,7 +131,10 @@ const StudentStatusModal: React.FC<StudentStatusModalProps> = ({
               multiple={false}
             />
           )}
-          <TouchableOpacity style={styles.saveButton} onPress={handleSaveStatus}>
+          <TouchableOpacity
+            style={styles.saveButton}
+            onPress={handleSaveStatus}
+          >
             <Text style={styles.saveButtonText}>Kaydet</Text>
           </TouchableOpacity>
         </View>
@@ -132,7 +143,11 @@ const StudentStatusModal: React.FC<StudentStatusModalProps> = ({
   );
 };
 
-const getStyles = (colors: { background: string; primary: string; text: string }) =>
+const getStyles = (colors: {
+  background: string;
+  primary: string;
+  text: string;
+}) =>
   StyleSheet.create({
     modalContainer: {
       flex: 1,
@@ -180,4 +195,4 @@ const getStyles = (colors: { background: string; primary: string; text: string }
     },
   });
 
-export default StudentStatusModal;
+export default TitleModal;
