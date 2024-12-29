@@ -37,8 +37,6 @@ export async function getSubjects(
     category: subject.category,
   }));
 
-  console.log('Enhanced Contents:', enhancedContents);
-
   return {
     contents: enhancedContents,
     currentPage: 1,

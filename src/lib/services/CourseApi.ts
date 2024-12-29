@@ -40,7 +40,6 @@ export async function getCourses(
 ): Promise<Page<Course>> {
   const query = buildQueryParams(params);
   const url = `/content/courses${query}`;
-  console.log('Generated URL:', url);
 
   const resp = await makeApiRequest({
     url,
@@ -49,12 +48,9 @@ export async function getCourses(
     },
   });
 
-  console.log('API Response Raw:', resp);
-
   await validateApiResponse(resp);
 
   const data = await resp.json();
-  console.log('Parsed Data:', data);
 
   if (!data.contents || !Array.isArray(data.contents)) {
     throw new Error(
@@ -68,9 +64,6 @@ export async function getCourses(
     subjectId: course.subject?.id || null, // subject varsa id'sini ekliyoruz, yoksa null
   }));
 
-  console.log('Enhanced Contents:', enhancedContents);
-
-  // Enhanced içerik ile yeni data döndürüyoruz
   return {
     ...data,
     contents: enhancedContents,

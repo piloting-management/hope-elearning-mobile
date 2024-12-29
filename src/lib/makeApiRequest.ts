@@ -44,6 +44,7 @@ export async function makeApiRequest({
     if (response.ok) {
       await response.clone().json();
     } else {
+      console.log(`requestUrl: ${requestUrl}`);
       console.log(`API Error Response Status: ${response.status}`);
       console.log('API Error Response Body:', await response.clone().text());
     }

@@ -62,64 +62,6 @@ const FacebookLogin = () => {
     }
   };
 
-  // const retryWithBackoff = async (
-  //   operation: any,
-  //   maxRetries = 3,
-  //   delay = 1000,
-  // ) => {
-  //   let retries = 0;
-  //   while (retries < maxRetries) {
-  //     try {
-  //       return await operation(); // İşlemi dene
-  //     } catch (error: any) {
-  //       if (error.code === 'firestore/unavailable' && retries < maxRetries) {
-  //         retries++;
-  //         console.log(`Hata alındı. ${retries}. tekrar denemesi...`);
-  //         await new Promise(resolve => setTimeout(resolve, delay * retries)); // Gecikmeli tekrar
-  //       } else {
-  //         throw error; // Başka bir hata veya maksimum deneme sınırına ulaşıldı
-  //       }
-  //     }
-  //   }
-  // };
-
-  // const checkAndStoreUser = async (
-  //   uid: string,
-  //   email: string | null,
-  //   deviceId: string,
-  // ) => {
-  //   try {
-  //     await retryWithBackoff(async () => {
-  //       const userRef = firestore().collection('users').doc(uid);
-  //       const doc = await userRef.get();
-  //       if (doc.exists) {
-  //         const userData = doc.data();
-  //         if (userData?.devices && userData.devices.includes(deviceId)) {
-  //           console.log('Cihaz zaten kayıtlı, devam ediliyor.');
-  //         } else {
-  //           console.log('Yeni cihaz kaydediliyor.');
-  //           await userRef.update({
-  //             devices: firestore.FieldValue.arrayUnion(deviceId),
-  //             lastLogin: firestore.FieldValue.serverTimestamp(),
-  //           });
-  //         }
-  //       } else {
-  //         console.log('Yeni kullanıcı oluşturuluyor.');
-  //         await userRef.set({
-  //           email: email || '',
-  //           devices: [deviceId],
-  //           lastLogin: firestore.FieldValue.serverTimestamp(),
-  //         });
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.error(
-  //       'Kullanıcı veya cihaz bilgileri kaydedilirken hata oluştu:',
-  //       error,
-  //     );
-  //   }
-  // };
-
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       {loading ? (
